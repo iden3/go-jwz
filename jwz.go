@@ -14,10 +14,11 @@ import (
 type HeaderKey string
 
 const (
+	HeaderType HeaderKey = "typ" // we allow to set typ of token
+
 	headerCritical  HeaderKey = "crit"
 	headerAlg       HeaderKey = "alg"
 	headerCircuitID HeaderKey = "circuitId"
-	headerTyp       HeaderKey = "typ"
 )
 
 // Token represents a JWZ Token.
@@ -41,7 +42,7 @@ func NewWithPayload(prover ProvingMethod, payload []byte) (*Token, error) {
 		CircuitID: prover.CircuitID(),
 		Method:    prover,
 	}
-	err := token.setHeader(prover.Alg(), prover.CircuitID())
+	err := token.setDefaultHeaders(prover.Alg(), prover.CircuitID())
 	if err != nil {
 		return nil, err
 	}
@@ -59,21 +60,32 @@ type rawJSONWebZeroknowledge struct {
 }
 
 // setHeader set headers for jwz
-func (token *Token) setHeader(zkpAlg, circuitId string) error {
+func (token *Token) setDefaultHeaders(zkpAlg, circuitId string) error {
 	headers := map[HeaderKey]interface{}{
 		headerAlg:       zkpAlg,
 		headerCritical:  []HeaderKey{headerCircuitID},
 		headerCircuitID: circuitId,
-		headerTyp:       "JWZ",
+		HeaderType:      "JWZ",
 	}
 
 	token.raw.Header = headers
 	return nil
 }
 
+// WithHeader allows to set or redefine default headers
+func (token *Token) WithHeader(key HeaderKey, value interface{}) error {
+	token.raw.Header[key] = value
+	return nil
+}
+
 // setPayload  set payload for jwz
 func (token *Token) setPayload(payload []byte) {
 	token.raw.Payload = payload
+}
+
+// GetPayload returns message payload
+func (token *Token) GetPayload() []byte {
+	return token.raw.Payload
 }
 
 // Parse parses a jwz message in compact or full serialization format.
