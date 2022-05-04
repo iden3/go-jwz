@@ -8,7 +8,10 @@ import (
 	"math/big"
 )
 
-func PrepareMessageHash(message []byte) (*big.Int, error) {
+// Hash returns poseidon hash of big.Int
+// that was created from sha256 hash of the message bytes
+// if such big.Int is not in the Field, DivMod result is returned.
+func Hash(message []byte) (*big.Int, error) {
 
 	// 1. sha256 hash
 	h := sha256.New()

@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// HeaderKey represents type for jwz headers keys
 type HeaderKey string
 
 const (
@@ -32,7 +33,7 @@ type Token struct {
 	raw rawJSONWebZeroknowledge // The raw token.  Populated when you Parse a token
 }
 
-// NewWithPayload creates a new Token with the specified signing method and claims.
+// NewWithPayload creates a new Token with the specified proving method and payload.
 func NewWithPayload(prover ProvingMethod, payload []byte) (*Token, error) {
 
 	token := &Token{
@@ -57,7 +58,7 @@ type rawJSONWebZeroknowledge struct {
 	ZKP       []byte                    `json:"zkp,omitempty"`
 }
 
-// SetHeader set headers for jwz
+// setHeader set headers for jwz
 func (token *Token) setHeader(zkpAlg, circuitId string) error {
 	headers := map[HeaderKey]interface{}{
 		headerAlg:       zkpAlg,
@@ -69,11 +70,13 @@ func (token *Token) setHeader(zkpAlg, circuitId string) error {
 	token.raw.Header = headers
 	return nil
 }
+
+// setPayload  set payload for jwz
 func (token *Token) setPayload(payload []byte) {
 	token.raw.Payload = payload
 }
 
-// Parse parses a jwz message in compact or full serialization format with unmarhslling outputs to map
+// Parse parses a jwz message in compact or full serialization format.
 func Parse(token string) (*Token, error) {
 	token = strings.TrimSpace(token)
 	if strings.HasPrefix(token, "{") {
@@ -106,6 +109,9 @@ func parseCompact(input string) (*Token, error) {
 	}
 
 	rawPayload, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil {
+		return nil, err
+	}
 
 	proof, err := base64.RawURLEncoding.DecodeString(parts[2])
 	if err != nil {
@@ -164,7 +170,7 @@ func (parsed *rawJSONWebZeroknowledge) sanitized() (*Token, error) {
 	return token, nil
 }
 
-// ParsePubSignals
+// ParsePubSignals unmarshalls proof public signals to provided structure.
 func (token *Token) ParsePubSignals(out circuits.PubSignalsUnmarshaller) error {
 	marshaledPubSignals, err := json.Marshal(token.ZkProof.PubSignals)
 	if err != nil {
@@ -202,13 +208,14 @@ func (token *Token) Prove(inputs interface{}, provingKey interface{}) error {
 	return nil
 }
 
-// Verify
+// Verify  perform zero knowledge verification.
 func (token *Token) Verify(verificationKey []byte) error {
 
-	// 1. verify that challenge is a hash of payload message // TODO: add protected headers.
-
+	// 1. prepare hash of payload message that had to be proven
 	msgHash, err := token.GetMessageHash()
-
+	if err != nil {
+		return err
+	}
 	// 2. verify that zkp is valid
 	err = token.Method.Verify(msgHash, token.ZkProof, verificationKey)
 	if err != nil {
@@ -218,7 +225,7 @@ func (token *Token) Verify(verificationKey []byte) error {
 	return nil
 }
 
-// GetMessageHash
+// GetMessageHash returns bytes of jwz message hash.
 func (token *Token) GetMessageHash() ([]byte, error) {
 
 	headers, err := json.Marshal(token.raw.Header)
@@ -230,7 +237,7 @@ func (token *Token) GetMessageHash() ([]byte, error) {
 
 	// JWZ ZkProof input value is ASCII(BASE64URL(UTF8(JWS Protected Header)) || '.' || BASE64URL(JWS Payload)).
 	messageToProof := []byte(fmt.Sprintf("%s.%s", protectedHeaders, payload))
-	hash, err := PrepareMessageHash(messageToProof)
+	hash, err := Hash(messageToProof)
 
 	if err != nil {
 		return nil, err
@@ -238,14 +245,14 @@ func (token *Token) GetMessageHash() ([]byte, error) {
 	return hash.Bytes(), nil
 }
 
-// FullSerialize
+// FullSerialize returns marshaled presentation of raw token as json string.
 func (token *Token) FullSerialize() (string, error) {
 
 	rawBytes, err := json.Marshal(token.raw)
 	return string(rawBytes), err
 }
 
-// CompactSerialize
+// CompactSerialize returns token serialized in three parts: base64 encoded headers, payload and proof.
 func (token *Token) CompactSerialize() (string, error) {
 
 	if token.raw.Header == nil || token.raw.Protected == nil || token.ZkProof == nil {

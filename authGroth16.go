@@ -60,7 +60,7 @@ func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *verifiable.
 	return VerifyProof(*proof, verificationKey.([]byte))
 }
 
-// Prove returns
+// Prove generates proof using auth circuit and groth16 alg, checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16Auth) Prove(messageHash []byte, inputs, provingKey interface{}) (*verifiable.ZKProof, error) {
 
 	// we have to verify that actual messageHash  was used in inputs
