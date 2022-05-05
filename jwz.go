@@ -217,6 +217,11 @@ func (token *Token) Prove(inputs interface{}, provingKey interface{}) error {
 		return err
 	}
 	token.ZkProof = proof
+	marhshaledProof, err := json.Marshal(proof)
+	if err != nil {
+		return err
+	}
+	token.raw.ZKP = marhshaledProof
 	return nil
 }
 
