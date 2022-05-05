@@ -22,8 +22,8 @@ import (
 // GenerateZkProof executes snarkjs groth16prove function and returns proof only if it's valid
 func GenerateZkProof(inputs []byte) (*verifiable.ZKProof, error) {
 
-	circuitPath := "./auth"
-	dir := "auth/js"
+	circuitPath := "/tmp/auth"
+	dir := "/tmp/auth/js"
 
 	// create tmf file for inputs
 	inputFile, err := ioutil.TempFile(dir, "input-*.json")
@@ -54,11 +54,13 @@ func GenerateZkProof(inputs []byte) (*verifiable.ZKProof, error) {
 	}
 
 	// calculate witness
-	wtnsCmd := exec.Command("node", "auth/js/generate_witness.js", circuitPath+"/circuit.wasm", inputFile.Name(), wtnsFile.Name())
-	_, err = wtnsCmd.CombinedOutput()
+	wtnsCmd := exec.Command("node", dir+"/generate_witness.js", circuitPath+"/circuit.wasm", inputFile.Name(), wtnsFile.Name())
+	res, err := wtnsCmd.CombinedOutput()
 	if err != nil {
+		fmt.Println(string(res))
 		return nil, err
 	}
+	fmt.Println(res)
 
 	// create tmp proof file
 	proofFile, err := ioutil.TempFile(dir, "proof-*.json")
