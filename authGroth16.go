@@ -69,6 +69,9 @@ func (m *ProvingMethodGroth16Auth) Prove(messageHash []byte, inputs, provingKey 
 		return nil, errors.New("provided inputs are not valid")
 	}
 
+	if authInputs.Challenge == nil {
+		return nil, errors.New("challenge wasn't not provided for signing")
+	}
 	if authInputs.Challenge.Cmp(new(big.Int).SetBytes(messageHash)) != 0 {
 		return nil, errors.New("signed challenge is different from actual message hash")
 	}
