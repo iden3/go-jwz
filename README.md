@@ -1,2 +1,2 @@
 # jwz
-Golang implementation of json web zeroknowledge 
+Golang implementation of json web zero-knowledge 
