@@ -1,8 +1,9 @@
 package jwz
 
 import (
-	"github.com/iden3/go-schema-processor/verifiable"
 	"sync"
+
+	"github.com/iden3/go-schema-processor/verifiable"
 )
 
 var provingMethods = map[string]func() ProvingMethod{}
@@ -11,7 +12,7 @@ var provingMethodLock = new(sync.RWMutex)
 // ProvingMethod can be used add new methods for signing or verifying tokens.
 type ProvingMethod interface {
 	Verify(messageHash []byte, proof *verifiable.ZKProof, verificationKey interface{}) error // Returns nil if proof is valid
-	Prove(messageHash []byte, inputs, provingKey interface{}) (*verifiable.ZKProof, error)   // Returns proof or error
+	Prove(messageHash []byte, inputs interface{}) (*verifiable.ZKProof, error)               // Returns proof or error
 	Alg() string                                                                             // Returns the alg identifier for this method (example: 'AUTH-GROTH-16')
 	CircuitID() string
 }

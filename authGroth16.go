@@ -3,9 +3,10 @@ package jwz
 import (
 	"encoding/json"
 	"errors"
+	"math/big"
+
 	"github.com/iden3/go-circuits"
 	"github.com/iden3/go-schema-processor/verifiable"
-	"math/big"
 )
 
 const groth16 string = "groth16"
@@ -60,8 +61,9 @@ func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *verifiable.
 	return VerifyProof(*proof, verificationKey.([]byte))
 }
 
-// Prove generates proof using auth circuit and groth16 alg, checks that proven message hash is set as a part of circuit specific inputs
-func (m *ProvingMethodGroth16Auth) Prove(messageHash []byte, inputs, provingKey interface{}) (*verifiable.ZKProof, error) {
+// Prove generates zk proof using auth circuit and groth16 alg,
+// checks that proven message hash is set as a part of circuit specific inputs
+func (m *ProvingMethodGroth16Auth) Prove(messageHash []byte, inputs interface{}) (*verifiable.ZKProof, error) {
 
 	// we have to verify that actual messageHash  was used in inputs
 	authInputs, ok := inputs.(circuits.AuthInputs)
