@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/iden3/go-circuits"
 	"github.com/iden3/go-schema-processor/verifiable"
-	"strings"
 )
 
 // HeaderKey represents type for jwz headers keys
@@ -196,33 +197,34 @@ func (token *Token) ParsePubSignals(out circuits.PubSignalsUnmarshaller) error {
 	return err
 }
 
-// Prove creates and returns a complete, prooved JWZ.
+// Prove creates and returns a complete, proved JWZ. Returned string is a compact serialized JWZ string.
+// All proving information is added to the token.
 // The token is proven using the Proving Method specified in the token.
-func (token *Token) Prove(inputs interface{}, provingKey interface{}) error {
+func (token *Token) Prove(inputs interface{}, provingKey interface{}) (string, error) {
 
 	// all headers must be protected
 	headers, err := json.Marshal(token.raw.Header)
 	if err != nil {
-		return err
+		return "", err
 	}
 	token.raw.Protected = headers
 
 	hash, err := token.GetMessageHash()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	proof, err := token.Method.Prove(hash, inputs, provingKey)
 	if err != nil {
-		return err
+		return "", err
 	}
 	token.ZkProof = proof
 	marhshaledProof, err := json.Marshal(proof)
 	if err != nil {
-		return err
+		return "", err
 	}
 	token.raw.ZKP = marhshaledProof
-	return nil
+	return token.CompactSerialize()
 }
 
 // Verify  perform zero knowledge verification.

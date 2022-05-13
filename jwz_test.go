@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"math/big"
+	"testing"
+
 	"github.com/iden3/go-circuits"
 	circuitsTesting "github.com/iden3/go-circuits/testing"
 	"github.com/iden3/go-schema-processor/verifiable"
 	"github.com/stretchr/testify/assert"
-	"math/big"
-	"testing"
 )
 
 func TestNewWithPayload(t *testing.T) {
@@ -32,7 +33,7 @@ func TestToken_Prove(t *testing.T) {
 	assert.NoError(t, err)
 	challenge := new(big.Int).SetBytes(msgHash)
 
-	var provingkey interface{}
+	var provingKey interface{}
 
 	ctx := context.Background()
 	privKeyHex := "28156abe7fe2fd433dc9df969286b96666489bac508612d0e16593e944c4f69f"
@@ -58,14 +59,9 @@ func TestToken_Prove(t *testing.T) {
 		Challenge: challenge,
 	}
 
-	err = token.Prove(inputs, provingkey)
-
+	tokenStr, err := token.Prove(inputs, provingKey)
 	assert.NoError(t, err)
-
-	tokenString, err := token.CompactSerialize()
-	assert.NoError(t, err)
-	t.Log(tokenString)
-
+	assert.Equal(t, "eyJhbGciOiJncm90aDE2IiwiY2lyY3VpdElkIjoiYXV0aCIsImNyaXQiOlsiY2lyY3VpdElkIl0sInR5cCI6IkpXWiJ9.bXltZXNzYWdl.eyJwcm9vZiI6eyJwaV9hIjpbIjM5MTE2NDg3ODk3OTI4OTUzNjU2MDUzODc2MjY4Njc5NDI1ODczNzA4NTc5MDE3NzUzNzUyMDk0MzY1NjM3NzEzNDU5NDY4Mzg5NjAiLCI5ODc3NjUwNjAxNTI3NjEzOTk0NzkxMjIxMjAzOTA0NTMxMjc2MDI5NDIzMDgzNzMwODA4MDgyNjgyNTU1MjUyMjUzMzgxODM5NTUzIiwiMSJdLCJwaV9iIjpbWyIxODI0OTMwMjg0NTAwMzI0MTEwMzQ3NTczMDcyMDAyNDk1MzY2NjQ1NTQwNjMxNDc2NjkxNTAzNTAxMzk4NjE5NDI4NjI1NDAzMTcwOCIsIjIwMjY4MDMzMjIxOTUzMTk4Nzg0MjE3NTAxNTg2MjM1NTEyMTA0OTUyODg5NTMyOTk3NTY4OTY3NzE0MzAyNjk2NTU5NDU0NDkzOTc5Il0sWyI5MjUxMTg3OTg1MTk2MjYxNDM2MjAwNTMxMzE3OTE3ODkxMDQyMTg3ODMwMjM3ODkyMDIzMDE1OTg2NjM2ODYyNjA3Njc1OTcxNTk0IiwiMTY2NTA2MjkzNjA3MjQ2NjM2ODQyOTY2MzE4NTQ4NzE2NTAzOTg2OTI5Mzg2ODAwODQxMTcyMTg1NDgxMjMzNjQyNDYzMjQ5NDY5NyJdLFsiMSIsIjAiXV0sInBpX2MiOlsiMjMwOTQ4MzA4OTgwMDQ1MjUzMTYzMDEzOTc0NzU5OTQxMjUwNjkzMDg5NjY3MDQ0OTk1MDkwODczMTczNTk3NzQ4NDc0Mjc2NjQ3NSIsIjE5Njk5MDk2NDE0OTExMTM4MTgzNzEzMDM5NDk1MDA4ODA1MDQ0NjYwMDM2NjkyNjcwNTM5NjQ5NzAzOTE4Njg4Mjg0MzAwMjAyNzM3IiwiMSJdLCJwcm90b2NvbCI6Imdyb3RoMTYifSwicHViX3NpZ25hbHMiOlsiMTkwNTQzMzM5NzA4ODUwMjM3ODAxMjM1NjA5MzY2NzU0NTY3MDA4NjE0NjkwNjg2MDMzMjE4ODQ3MTg3NDg5NjE3NTA5MzA0NjY3OTQiLCIxODY1NjE0NzU0NjY2Njk0NDQ4NDQ1Mzg5OTI0MTkxNjQ2OTU0NDA5MDI1ODgxMDE5MjgwMzk0OTUyMjc5NDQ5MDQ5MzI3MTAwNTMxMyIsIjM3OTk0OTE1MDEzMDIxNDcyMzQyMDU4OTYxMDkxMTE2MTg5NTQ5NTY0Nzc4OTAwNjY0OTc4NTI2NDczODE0MTI5OTEzNTQxNDI3MiJdfQ", tokenStr)
 }
 
 func TestToken_Parse(t *testing.T) {
