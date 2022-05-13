@@ -200,7 +200,7 @@ func (token *Token) ParsePubSignals(out circuits.PubSignalsUnmarshaller) error {
 // Prove creates and returns a complete, proved JWZ. Returned string is a compact serialized JWZ string.
 // All proving information is added to the token.
 // The token is proven using the Proving Method specified in the token.
-func (token *Token) Prove(inputs interface{}, provingKey interface{}) (string, error) {
+func (token *Token) Prove(inputs interface{}) (string, error) {
 
 	// all headers must be protected
 	headers, err := json.Marshal(token.raw.Header)
@@ -214,7 +214,7 @@ func (token *Token) Prove(inputs interface{}, provingKey interface{}) (string, e
 		return "", err
 	}
 
-	proof, err := token.Method.Prove(hash, inputs, provingKey)
+	proof, err := token.Method.Prove(hash, inputs)
 	if err != nil {
 		return "", err
 	}
