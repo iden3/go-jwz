@@ -41,9 +41,10 @@ type Token struct {
 func NewWithPayload(prover ProvingMethod, payload []byte, inputsPreparer ProofInputsPreparerHandlerFunc) (*Token, error) {
 
 	token := &Token{
-		Alg:       prover.Alg(),
-		CircuitID: prover.CircuitID(),
-		Method:    prover,
+		Alg:            prover.Alg(),
+		CircuitID:      prover.CircuitID(),
+		Method:         prover,
+		inputsPreparer: inputsPreparer,
 	}
 	err := token.setDefaultHeaders(prover.Alg(), prover.CircuitID())
 	if err != nil {
