@@ -8,37 +8,17 @@ import (
 	circuitsTesting "github.com/iden3/go-circuits/testing"
 	"github.com/iden3/go-schema-processor/verifiable"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"math/big"
 	"testing"
 )
 
-func TestNewWithPayload(t *testing.T) {
-	payload := []byte("mymessage")
-	token, err := NewWithPayload(ProvingMethodGroth16AuthInstance, payload)
-	assert.NoError(t, err)
-
-	assert.Equal(t, "groth16", token.Alg)
-	assert.Equal(t, "auth", token.CircuitID)
-	assert.Equal(t, []HeaderKey{headerCircuitID}, token.raw.Header[headerCritical])
-	assert.Equal(t, "groth16", token.raw.Header[headerAlg])
-}
-
-func TestToken_Prove(t *testing.T) {
-	payload := []byte("mymessage")
-	token, err := NewWithPayload(ProvingMethodGroth16AuthInstance, payload)
-	assert.NoError(t, err)
-
-	msgHash, err := token.GetMessageHash()
-	assert.NoError(t, err)
-	challenge := new(big.Int).SetBytes(msgHash)
-
-	var provingkey interface{}
-
-	ctx := context.Background()
+func MockPrepareAuthInputs(hash []byte, circuitID circuits.CircuitID) ([]byte, error) {
 	privKeyHex := "28156abe7fe2fd433dc9df969286b96666489bac508612d0e16593e944c4f69f"
-	identifier, claim, state, claimsTree, revTree, rootsTree, claimEntryMTP, claimNonRevMTP, signature, err := circuitsTesting.AuthClaimFullInfo(ctx, privKeyHex, challenge)
-	assert.Nil(t, err)
 
+	challenge := new(big.Int).SetBytes(hash)
+
+	identifier, claim, state, claimsTree, revTree, rootsTree, claimEntryMTP, claimNonRevMTP, signature, _ := circuitsTesting.AuthClaimFullInfo(context.Background(), privKeyHex, challenge)
 	treeState := circuits.TreeState{
 		State:          state,
 		ClaimsRoot:     claimsTree.Root(),
@@ -57,14 +37,46 @@ func TestToken_Prove(t *testing.T) {
 		Signature: signature,
 		Challenge: challenge,
 	}
+	return inputs.InputsMarshal()
+}
 
-	err = token.Prove(inputs, provingkey)
+func TestNewWithPayload(t *testing.T) {
+	payload := []byte("mymessage")
+	token, err := NewWithPayload(ProvingMethodGroth16AuthInstance, payload, MockPrepareAuthInputs)
+	assert.NoError(t, err)
+
+	assert.Equal(t, "groth16", token.Alg)
+	assert.Equal(t, "auth", token.CircuitID)
+	assert.Equal(t, []HeaderKey{headerCircuitID}, token.raw.Header[headerCritical])
+	assert.Equal(t, "groth16", token.raw.Header[headerAlg])
+}
+
+func TestToken_Prove(t *testing.T) {
+	payload := []byte("mymessage")
+	token, err := NewWithPayload(ProvingMethodGroth16AuthInstance, payload, MockPrepareAuthInputs)
+	assert.NoError(t, err)
+
+	var provingKey, verificationKey, wasm []byte
+
+	provingKey, err = ioutil.ReadFile("/tmp/auth/circuit_final.zkey")
+	assert.Nil(t, err)
+
+	wasm, err = ioutil.ReadFile("/tmp/auth/circuit.wasm")
+	assert.Nil(t, err)
+
+	verificationKey, err = ioutil.ReadFile("/tmp/auth/verification_key.json")
+	assert.Nil(t, err)
 
 	assert.NoError(t, err)
 
-	tokenString, err := token.CompactSerialize()
+	tokenString, err := token.Prove(provingKey, wasm)
+
 	assert.NoError(t, err)
 	t.Log(tokenString)
+
+	isValid, err := token.Verify(verificationKey)
+	assert.NoError(t, err)
+	assert.True(t, isValid)
 
 }
 
@@ -115,8 +127,8 @@ func TestToken_Verify(t *testing.T) {
 	verKey, err := circuits.GetVerificationKey(circuits.CircuitID(token.CircuitID))
 	assert.NoError(t, err)
 
-	err = token.Verify(verKey)
+	isValid, err := token.Verify(verKey)
 	assert.NoError(t, err)
-	assert.True(t, token.Valid)
+	assert.True(t, isValid)
 
 }

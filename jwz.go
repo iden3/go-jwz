@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+type VerificationKeyFunc func(*Token) ([]byte, error)
+
 // HeaderKey represents type for jwz headers keys
 type HeaderKey string
 
@@ -29,13 +31,14 @@ type Token struct {
 	CircuitID string // id of circuit that will be used for proving
 
 	Method ProvingMethod // proving method to create a zkp
-	Valid  bool          //  shows if proof is valid. Populated after verification
 
 	raw rawJSONWebZeroknowledge // The raw token.  Populated when you Parse a token
+
+	inputsPreparer ProofInputsPreparerHandlerFunc
 }
 
 // NewWithPayload creates a new Token with the specified proving method and payload.
-func NewWithPayload(prover ProvingMethod, payload []byte) (*Token, error) {
+func NewWithPayload(prover ProvingMethod, payload []byte, inputsPreparer ProofInputsPreparerHandlerFunc) (*Token, error) {
 
 	token := &Token{
 		Alg:       prover.Alg(),
@@ -198,48 +201,52 @@ func (token *Token) ParsePubSignals(out circuits.PubSignalsUnmarshaller) error {
 
 // Prove creates and returns a complete, prooved JWZ.
 // The token is proven using the Proving Method specified in the token.
-func (token *Token) Prove(inputs interface{}, provingKey interface{}) error {
+func (token *Token) Prove(provingKey, wasm []byte) (string, error) {
 
 	// all headers must be protected
 	headers, err := json.Marshal(token.raw.Header)
 	if err != nil {
-		return err
+		return "", err
 	}
 	token.raw.Protected = headers
 
-	hash, err := token.GetMessageHash()
+	msgHash, err := token.GetMessageHash()
 	if err != nil {
-		return err
+		return "", err
 	}
-
-	proof, err := token.Method.Prove(hash, inputs, provingKey)
+	inputs, err := token.inputsPreparer.Prepare(msgHash, circuits.CircuitID(token.CircuitID))
 	if err != nil {
-		return err
+		return "", err
+	}
+	proof, err := token.Method.Prove(inputs, provingKey, wasm)
+	if err != nil {
+		return "", err
+	}
+	marshaledProof, err := json.Marshal(proof)
+	if err != nil {
+		return "", err
 	}
 	token.ZkProof = proof
-	marhshaledProof, err := json.Marshal(proof)
-	if err != nil {
-		return err
-	}
-	token.raw.ZKP = marhshaledProof
-	return nil
+	token.raw.ZKP = marshaledProof
+
+	return token.CompactSerialize()
 }
 
 // Verify  perform zero knowledge verification.
-func (token *Token) Verify(verificationKey []byte) error {
+func (token *Token) Verify(verificationKey []byte) (bool, error) {
 
 	// 1. prepare hash of payload message that had to be proven
 	msgHash, err := token.GetMessageHash()
 	if err != nil {
-		return err
+		return false, err
 	}
 	// 2. verify that zkp is valid
 	err = token.Method.Verify(msgHash, token.ZkProof, verificationKey)
 	if err != nil {
-		return err
+		return false, err
 	}
-	token.Valid = true
-	return nil
+
+	return true, nil
 }
 
 // GetMessageHash returns bytes of jwz message hash.

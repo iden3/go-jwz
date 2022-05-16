@@ -178,6 +178,8 @@ github.com/iden3/go-iden3-crypto v0.0.13 h1:ixWRiaqDULNyIDdOWz2QQJG5t4PpNHkQk2P6
 github.com/iden3/go-iden3-crypto v0.0.13/go.mod h1:swXIv0HFbJKobbQBtsB50G7IHr6PbTowutSew/iBEoo=
 github.com/iden3/go-merkletree-sql v1.0.1 h1:zZMhhyV6FLoLL+pHQiiPoAI3ORSCTKOL32/n7Sb/+R4=
 github.com/iden3/go-merkletree-sql v1.0.1/go.mod h1:NhLFvX01F/3QqS0FUkC6T2BXPksz+9EbRhKQ7abaBSE=
+github.com/iden3/go-rapidsnark v0.0.0-20220513041303-36c4edb31437 h1:XKmyCAqVJaHDrrmtOkn6V/RewSjMHkDhCBlI2iujTdw=
+github.com/iden3/go-rapidsnark v0.0.0-20220513041303-36c4edb31437/go.mod h1:keWTebuYk8ytFSqGU/HoSsg7330kApY9lmfmSewUhDc=
 github.com/iden3/go-schema-processor v0.0.22 h1:T0Mrb5wrL8Zezm3w8VXr52VbQ+VbrhAWg6CrbGSJMwY=
 github.com/iden3/go-schema-processor v0.0.22/go.mod h1:x6J7r4wsRVgKITAi1yC0D0yqL7HySltNIY8OyTQBu3U=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto/bn256"
+	"github.com/iden3/go-rapidsnark"
 	"github.com/iden3/go-schema-processor/verifiable"
 	"io/ioutil"
 	"math/big"
@@ -20,10 +21,9 @@ import (
 */
 
 // GenerateZkProof executes snarkjs groth16prove function and returns proof only if it's valid
-func GenerateZkProof(inputs []byte) (*verifiable.ZKProof, error) {
+func GenerateZkProof(inputs, provingKey, wasm []byte) (*verifiable.ZKProof, error) {
 
-	circuitPath := "/tmp/auth"
-	dir := "/tmp/auth/js"
+	dir := "/tmp/"
 
 	// create tmf file for inputs
 	inputFile, err := ioutil.TempFile(dir, "input-*.json")
@@ -42,6 +42,23 @@ func GenerateZkProof(inputs []byte) (*verifiable.ZKProof, error) {
 		return nil, err
 	}
 
+	// create tmf wasm for wasm
+	wasmFile, err := ioutil.TempFile(dir, "wasm-*.wasm")
+	if err != nil {
+		return nil, errors.New("failed to create tmf file for inputs")
+	}
+	defer os.Remove(wasmFile.Name())
+
+	// write json inputs into tmp file
+	_, err = wasmFile.Write(wasm)
+	if err != nil {
+		return nil, errors.New("failed to write wasm into tmp file")
+	}
+	err = wasmFile.Close()
+	if err != nil {
+		return nil, err
+	}
+
 	// create tmp witness file
 	wtnsFile, err := ioutil.TempFile(dir, "witness-*.wtns")
 	if err != nil {
@@ -54,7 +71,7 @@ func GenerateZkProof(inputs []byte) (*verifiable.ZKProof, error) {
 	}
 
 	// calculate witness
-	wtnsCmd := exec.Command("node", dir+"/generate_witness.js", circuitPath+"/circuit.wasm", inputFile.Name(), wtnsFile.Name())
+	wtnsCmd := exec.Command("node", dir+"generate_witness.js", wasmFile.Name(), inputFile.Name(), wtnsFile.Name())
 	res, err := wtnsCmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(res))
@@ -84,10 +101,36 @@ func GenerateZkProof(inputs []byte) (*verifiable.ZKProof, error) {
 		return nil, err
 	}
 
+	// create tmf file for zkey
+	keyFile, err := ioutil.TempFile(dir, "key-*.zkey")
+	if err != nil {
+		return nil, errors.New("failed to create tmf file for inputs")
+	}
+	defer os.Remove(keyFile.Name())
+
+	// write json inputs into tmp file
+	_, err = keyFile.Write(provingKey)
+	if err != nil {
+		return nil, errors.New("failed to write json inputs into tmp file")
+	}
+	err = keyFile.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	wtnsBytes, err := ioutil.ReadFile(wtnsFile.Name())
+	if err != nil {
+		return nil, err
+	}
+	proof, publicInputs, err := rapidsnark.Groth16Prover(provingKey, wtnsBytes)
+	if err != nil {
+		return nil, err
+	}
+
 	var execCommandParams []string
 	execCommandName := "snarkjs"
 	execCommandParams = append(execCommandParams, "groth16", "prove")
-	execCommandParams = append(execCommandParams, circuitPath+"/circuit_final.zkey", wtnsFile.Name(), proofFile.Name(), publicFile.Name())
+	execCommandParams = append(execCommandParams, keyFile.Name(), wtnsFile.Name(), proofFile.Name(), publicFile.Name())
 	proveCmd := exec.Command(execCommandName, execCommandParams...)
 	_, err = proveCmd.CombinedOutput()
 	if err != nil {
@@ -95,43 +138,35 @@ func GenerateZkProof(inputs []byte) (*verifiable.ZKProof, error) {
 	}
 	fmt.Println("-- groth16 prove completed --")
 
-	// verify proof
-	verifyCmd := exec.Command("snarkjs", "groth16", "verify", circuitPath+"/verification_key.json", publicFile.Name(), proofFile.Name())
-	verifyOut, err := verifyCmd.CombinedOutput()
-	if err != nil {
-		return nil, err
-	}
-	fmt.Printf("-- groth16 verify -- snarkjs result %s \n", strings.TrimSpace(string(verifyOut)))
-
-	if !strings.Contains(string(verifyOut), "OK!") {
-		return nil, errors.New("invalid proof")
-	}
-
-	var proof verifiable.ProofData
-	var pubSignals []string
+	var p verifiable.ProofData
+	var ps []string
 
 	// read generated public signals
-	publicJSON, err := os.ReadFile(publicFile.Name())
+	//publicJSON, err := os.ReadFile(publicFile.Name())
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//err = json.Unmarshal(publicJSON, &pubSignals)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//// read generated proof
+	//proofJSON, err := os.ReadFile(proofFile.Name())
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	err = json.Unmarshal([]byte(proof), &p)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal([]byte(publicInputs), &ps)
 	if err != nil {
 		return nil, err
 	}
 
-	err = json.Unmarshal(publicJSON, &pubSignals)
-	if err != nil {
-		return nil, err
-	}
-	// read generated proof
-	proofJSON, err := os.ReadFile(proofFile.Name())
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(proofJSON, &proof)
-	if err != nil {
-		return nil, err
-	}
-
-	return &verifiable.ZKProof{Proof: &proof, PubSignals: pubSignals}, nil
+	return &verifiable.ZKProof{Proof: &p, PubSignals: ps}, nil
 }
 
 // r is the mod of the finite field
