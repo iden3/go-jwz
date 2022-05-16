@@ -74,7 +74,6 @@ func GenerateZkProof(inputs, provingKey, wasm []byte) (*verifiable.ZKProof, erro
 	wtnsCmd := exec.Command("node", dir+"generate_witness.js", wasmFile.Name(), inputFile.Name(), wtnsFile.Name())
 	res, err := wtnsCmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(string(res))
 		return nil, err
 	}
 	fmt.Println(res)
@@ -127,35 +126,8 @@ func GenerateZkProof(inputs, provingKey, wasm []byte) (*verifiable.ZKProof, erro
 		return nil, err
 	}
 
-	var execCommandParams []string
-	execCommandName := "snarkjs"
-	execCommandParams = append(execCommandParams, "groth16", "prove")
-	execCommandParams = append(execCommandParams, keyFile.Name(), wtnsFile.Name(), proofFile.Name(), publicFile.Name())
-	proveCmd := exec.Command(execCommandName, execCommandParams...)
-	_, err = proveCmd.CombinedOutput()
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println("-- groth16 prove completed --")
-
 	var p verifiable.ProofData
 	var ps []string
-
-	// read generated public signals
-	//publicJSON, err := os.ReadFile(publicFile.Name())
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//err = json.Unmarshal(publicJSON, &pubSignals)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//// read generated proof
-	//proofJSON, err := os.ReadFile(proofFile.Name())
-	//if err != nil {
-	//	return nil, err
-	//}
 
 	err = json.Unmarshal([]byte(proof), &p)
 	if err != nil {
