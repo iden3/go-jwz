@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/iden3/go-circuits"
-	"github.com/iden3/go-schema-processor/verifiable"
+	"github.com/iden3/go-rapidsnark/types"
 	"strings"
 )
 
@@ -25,7 +25,7 @@ const (
 
 // Token represents a JWZ Token.
 type Token struct {
-	ZkProof *verifiable.ZKProof // The third segment of the token.  Populated when you Parse a token
+	ZkProof *types.ZKProof // The third segment of the token.  Populated when you Parse a token
 
 	Alg       string // fields that are part of headers
 	CircuitID string // id of circuit that will be used for proving

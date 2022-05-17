@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	witnesscalc "github.com/iden3/go-circom-witnesscalc"
 	"github.com/iden3/go-circuits"
-	"github.com/iden3/go-rapidsnark"
-	"github.com/iden3/go-schema-processor/verifiable"
+	"github.com/iden3/go-rapidsnark/prover"
+	"github.com/iden3/go-rapidsnark/types"
+	"github.com/iden3/go-rapidsnark/verifier"
+	"github.com/iden3/go-rapidsnark/witness"
+
 	"math/big"
 	"time"
 )
@@ -44,7 +46,7 @@ func (m *ProvingMethodGroth16Auth) CircuitID() string {
 }
 
 // Verify performs groth16 proof verification and checks equality of message hash and proven challenge public signals
-func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *verifiable.ZKProof, verificationKey []byte) error {
+func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *types.ZKProof, verificationKey []byte) error {
 
 	var outputs circuits.AuthPubSignals
 	pubBytes, err := json.Marshal(proof.PubSignals)
@@ -61,19 +63,19 @@ func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *verifiable.
 		return errors.New("challenge is not equal to message hash")
 	}
 
-	return VerifyProof(*proof, verificationKey)
+	return verifier.VerifyGroth16(*proof, verificationKey)
 }
 
 // Prove generates proof using auth circuit and groth16 alg, checks that proven message hash is set as a part of circuit specific inputs
-func (m *ProvingMethodGroth16Auth) Prove(inputs, provingKey, wasm []byte) (*verifiable.ZKProof, error) {
+func (m *ProvingMethodGroth16Auth) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
 	now := time.Now()
-	calc, err := witnesscalc.NewCircom2WitnessCalculator(wasm, true)
+	calc, err := witness.NewCircom2WitnessCalculator(wasm, true)
 	if err != nil {
 		return nil, err
 	}
 
-	parsedInputs, err := witnesscalc.ParseInputs(inputs)
+	parsedInputs, err := witness.ParseInputs(inputs)
 	if err != nil {
 		return nil, err
 	}
@@ -84,23 +86,6 @@ func (m *ProvingMethodGroth16Auth) Prove(inputs, provingKey, wasm []byte) (*veri
 	}
 	fmt.Println(time.Since(now))
 	now = time.Now()
-	proof, publicInputs, err := rapidsnark.Groth16Prover(provingKey, wtnsBytes)
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println(time.Since(now))
+	return prover.Groth16Prover(provingKey, wtnsBytes)
 
-	var p verifiable.ProofData
-	var ps []string
-
-	err = json.Unmarshal([]byte(proof), &p)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal([]byte(publicInputs), &ps)
-	if err != nil {
-		return nil, err
-	}
-
-	return &verifiable.ZKProof{Proof: &p, PubSignals: ps}, nil
 }
