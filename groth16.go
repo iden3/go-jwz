@@ -4,142 +4,16 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto/bn256"
-	"github.com/iden3/go-rapidsnark"
 	"github.com/iden3/go-schema-processor/verifiable"
-	"io/ioutil"
 	"math/big"
-	"os"
-	"os/exec"
 	"strings"
 )
 
 /*
 	File proof generation. it will be deleted
 */
-
-// GenerateZkProof executes snarkjs groth16prove function and returns proof only if it's valid
-func GenerateZkProof(inputs, provingKey, wasm []byte) (*verifiable.ZKProof, error) {
-
-	dir := "/tmp/"
-
-	// create tmf file for inputs
-	inputFile, err := ioutil.TempFile(dir, "input-*.json")
-	if err != nil {
-		return nil, errors.New("failed to create tmf file for inputs")
-	}
-	defer os.Remove(inputFile.Name())
-
-	// write json inputs into tmp file
-	_, err = inputFile.Write(inputs)
-	if err != nil {
-		return nil, errors.New("failed to write json inputs into tmp file")
-	}
-	err = inputFile.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	// create tmf wasm for wasm
-	wasmFile, err := ioutil.TempFile(dir, "wasm-*.wasm")
-	if err != nil {
-		return nil, errors.New("failed to create tmf file for inputs")
-	}
-	defer os.Remove(wasmFile.Name())
-
-	// write json inputs into tmp file
-	_, err = wasmFile.Write(wasm)
-	if err != nil {
-		return nil, errors.New("failed to write wasm into tmp file")
-	}
-	err = wasmFile.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	// create tmp witness file
-	wtnsFile, err := ioutil.TempFile(dir, "witness-*.wtns")
-	if err != nil {
-		return nil, err
-	}
-	defer os.Remove(wtnsFile.Name())
-	err = wtnsFile.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	// calculate witness
-	wtnsCmd := exec.Command("node", dir+"generate_witness.js", wasmFile.Name(), inputFile.Name(), wtnsFile.Name())
-	res, err := wtnsCmd.CombinedOutput()
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println(res)
-
-	// create tmp proof file
-	proofFile, err := ioutil.TempFile(dir, "proof-*.json")
-	if err != nil {
-		return nil, err
-	}
-	defer os.Remove(proofFile.Name())
-	err = proofFile.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	// create tmp public file
-	publicFile, err := ioutil.TempFile(dir, "public-*.json")
-	if err != nil {
-		return nil, err
-	}
-	defer os.Remove(publicFile.Name())
-	err = publicFile.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	// create tmf file for zkey
-	keyFile, err := ioutil.TempFile(dir, "key-*.zkey")
-	if err != nil {
-		return nil, errors.New("failed to create tmf file for inputs")
-	}
-	defer os.Remove(keyFile.Name())
-
-	// write json inputs into tmp file
-	_, err = keyFile.Write(provingKey)
-	if err != nil {
-		return nil, errors.New("failed to write json inputs into tmp file")
-	}
-	err = keyFile.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	wtnsBytes, err := ioutil.ReadFile(wtnsFile.Name())
-	if err != nil {
-		return nil, err
-	}
-	proof, publicInputs, err := rapidsnark.Groth16Prover(provingKey, wtnsBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	var p verifiable.ProofData
-	var ps []string
-
-	err = json.Unmarshal([]byte(proof), &p)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal([]byte(publicInputs), &ps)
-	if err != nil {
-		return nil, err
-	}
-
-	return &verifiable.ZKProof{Proof: &p, PubSignals: ps}, nil
-}
 
 // r is the mod of the finite field
 const r string = "21888242871839275222246405745257275088548364400416034343698204186575808495617"
