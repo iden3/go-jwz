@@ -10,8 +10,6 @@ import (
 	"strings"
 )
 
-type VerificationKeyFunc func(*Token) ([]byte, error)
-
 // HeaderKey represents type for jwz headers keys
 type HeaderKey string
 
