@@ -3,7 +3,6 @@ package jwz
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/iden3/go-circuits"
 	"github.com/iden3/go-rapidsnark/prover"
 	"github.com/iden3/go-rapidsnark/types"
@@ -11,7 +10,6 @@ import (
 	"github.com/iden3/go-rapidsnark/witness"
 
 	"math/big"
-	"time"
 )
 
 const groth16 string = "groth16"
@@ -69,7 +67,6 @@ func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *types.ZKPro
 // Prove generates proof using auth circuit and groth16 alg, checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16Auth) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
-	now := time.Now()
 	calc, err := witness.NewCircom2WitnessCalculator(wasm, true)
 	if err != nil {
 		return nil, err
@@ -84,8 +81,6 @@ func (m *ProvingMethodGroth16Auth) Prove(inputs, provingKey, wasm []byte) (*type
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(time.Since(now))
-	now = time.Now()
 	return prover.Groth16Prover(provingKey, wtnsBytes)
 
 }
