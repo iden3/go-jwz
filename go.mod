@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/ethereum/go-ethereum v1.10.17
-	github.com/iden3/go-circuits v0.0.39
+	github.com/iden3/go-circuits v0.0.41
 	github.com/iden3/go-iden3-crypto v0.0.13
 	github.com/iden3/go-rapidsnark v0.0.0-20220513041303-36c4edb31437
 	github.com/iden3/go-schema-processor v0.0.22

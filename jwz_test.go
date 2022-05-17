@@ -32,7 +32,7 @@ func MockPrepareAuthInputs(hash []byte, circuitID circuits.CircuitID) ([]byte, e
 			Claim:       claim,
 			Proof:       claimEntryMTP,
 			TreeState:   treeState,
-			NonRevProof: circuits.ClaimNonRevStatus{TreeState: treeState, Proof: claimNonRevMTP},
+			NonRevProof: &circuits.ClaimNonRevStatus{TreeState: treeState, Proof: claimNonRevMTP},
 		},
 		Signature: signature,
 		Challenge: challenge,
