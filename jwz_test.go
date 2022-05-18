@@ -1,43 +1,18 @@
 package jwz
 
 import (
-	"context"
 	"encoding/base64"
 	"encoding/json"
 	"github.com/iden3/go-circuits"
-	circuitsTesting "github.com/iden3/go-circuits/testing"
 	"github.com/iden3/go-rapidsnark/types"
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
-	"math/big"
+	"os"
 	"testing"
 )
 
 func MockPrepareAuthInputs(hash []byte, circuitID circuits.CircuitID) ([]byte, error) {
-	privKeyHex := "28156abe7fe2fd433dc9df969286b96666489bac508612d0e16593e944c4f69f"
-
-	challenge := new(big.Int).SetBytes(hash)
-
-	identifier, claim, state, claimsTree, revTree, rootsTree, claimEntryMTP, claimNonRevMTP, signature, _ := circuitsTesting.AuthClaimFullInfo(context.Background(), privKeyHex, challenge)
-	treeState := circuits.TreeState{
-		State:          state,
-		ClaimsRoot:     claimsTree.Root(),
-		RevocationRoot: revTree.Root(),
-		RootOfRoots:    rootsTree.Root(),
-	}
-
-	inputs := circuits.AuthInputs{
-		ID: identifier,
-		AuthClaim: circuits.Claim{
-			Claim:       claim,
-			Proof:       claimEntryMTP,
-			TreeState:   treeState,
-			NonRevProof: &circuits.ClaimNonRevStatus{TreeState: treeState, Proof: claimNonRevMTP},
-		},
-		Signature: signature,
-		Challenge: challenge,
-	}
-	return inputs.InputsMarshal()
+	// hash is already signed
+	return []byte(`{"userAuthClaim":["304427537360709784173770334266246861770","0","17640206035128972995519606214765283372613874593503528180869261482403155458945","20634138280259599560273310290025659992320584624461316485434108770067472477956","15930428023331155902","0","0","0"],"userAuthClaimMtp":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"userAuthClaimNonRevMtp":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"userAuthClaimNonRevMtpAuxHi":"0","userAuthClaimNonRevMtpAuxHv":"0","userAuthClaimNonRevMtpNoAux":"1","challenge":"19054333970885023780123560936675456700861469068603321884718748961750930466794","challengeSignatureR8x":"4219150445599866015975338408000561684366422973912091598548631071677167824366","challengeSignatureR8y":"12598735963096034383552425395289278326931986118036778264141841465661466935045","challengeSignatureS":"482456738038705898703405023807226003538372788878082557708969187456494192709","userClaimsTreeRoot":"9763429684850732628215303952870004997159843236039795272605841029866455670219","userID":"379949150130214723420589610911161895495647789006649785264738141299135414272","userRevTreeRoot":"0","userRootsTreeRoot":"0","userState":"18656147546666944484453899241916469544090258810192803949522794490493271005313"}`), nil
 }
 
 func TestNewWithPayload(t *testing.T) {
@@ -58,13 +33,13 @@ func TestToken_Prove(t *testing.T) {
 
 	var provingKey, verificationKey, wasm []byte
 
-	provingKey, err = ioutil.ReadFile("/tmp/auth/circuit_final.zkey")
+	provingKey, err = os.ReadFile("./testdata/circuit_final.zkey")
 	assert.Nil(t, err)
 
-	wasm, err = ioutil.ReadFile("/tmp/auth/circuit.wasm")
+	wasm, err = os.ReadFile("./testdata/circuit.wasm")
 	assert.Nil(t, err)
 
-	verificationKey, err = ioutil.ReadFile("/tmp/auth/verification_key.json")
+	verificationKey, err = os.ReadFile("./testdata/verification_key.json")
 	assert.Nil(t, err)
 
 	assert.NoError(t, err)
@@ -117,18 +92,4 @@ func TestToken_ParseWithOutputs(t *testing.T) {
 	msgHash, err := token.GetMessageHash()
 	assert.NoError(t, err)
 	assert.Equal(t, msgHash, outs.Challenge.Bytes())
-}
-
-func TestToken_Verify(t *testing.T) {
-
-	token, err := Parse("eyJhbGciOiJncm90aDE2IiwiY2lyY3VpdElkIjoiYXV0aCIsImNyaXQiOlsiY2lyY3VpdElkIl0sInR5cCI6IkpXWiJ9.bXltZXNzYWdl.eyJwcm9vZiI6eyJwaV9hIjpbIjYzMzY0ODgxNzk0NjAwNDc3NjAwMTcxMDIwMDU5ODQ0OTk5NzI0NTg3ODc2MzM5MjEyMTg3MTYyMzQ0MzMzMTkzOTE2ODA3ODkxNjkiLCIxODE5MzYwNjcwMzM3MjQwNDcwNTk2NjMwNjE2NTE0OTI4NDE5MDE5NjY4NDM2NTQ0OTY2MzA1NzA1MzM1MDc4MDQwNjAxMDU3ODgyNSIsIjEiXSwicGlfYiI6W1siNDc3NzAwNzIxMjU4NjUyOTc2NDk2MjcwNjE2NzM3MTU1ODUzNDA3NzY2MDg3Mjg1ODE2NjgwMzQ4ODc2MTU3NTYxNTU1NjcxNjAxMyIsIjEyMTk3ODk0NjEwNjU3MzA1MTg5MjE5OTg1NDA5OTA2NTM0MDkyNDQzNzU0MTQxNjE3OTAyMDQwMjYwMTgwNzM1MTY0Njk1NDUxMzc2Il0sWyIxMzI4NzQyNjMyNDAyMzEyMjAwMjk2MDY0Mzc4ODE0NjY4MzE4NzcxNzk0NDQwOTg1NDEzNDEwMTIyOTE4NDk5MDc2NDA4MTEyNDI1NSIsIjI2NTQ3NTMzMDY0NzgyODk2MzQyOTA3OTQxMDY1MjEzNzcyMzc1MjE2NDI5MzA2MTgwNTA0ODAzMzg3Njc1NTk5NDEwMTQyODQ5NTUiXSxbIjEiLCIwIl1dLCJwaV9jIjpbIjkzMjkwNzI2MzIwMDQ0OTAzMDc2MzEyNDE0ODEwNTQ2NDUyMzUzMTg2ODIwNjg1ODc3MDkzNjQyNzU5NTIxODUwNjE3OTM3NzgzOTMiLCIyNzM5ODMzMzc2MjExODEzNDY4NDExOTgzNzc4ODY4MTg4MDkxOTUxMjM2NDAxNTY3NjMyNDQ5NDQzMjc1NzgwOTMwOTEyNDkwMzA0IiwiMSJdLCJwcm90b2NvbCI6Imdyb3RoMTYifSwicHViX3NpZ25hbHMiOlsiMTkwNTQzMzM5NzA4ODUwMjM3ODAxMjM1NjA5MzY2NzU0NTY3MDA4NjE0NjkwNjg2MDMzMjE4ODQ3MTg3NDg5NjE3NTA5MzA0NjY3OTQiLCIxODY1NjE0NzU0NjY2Njk0NDQ4NDQ1Mzg5OTI0MTkxNjQ2OTU0NDA5MDI1ODgxMDE5MjgwMzk0OTUyMjc5NDQ5MDQ5MzI3MTAwNTMxMyIsIjM3OTk0OTE1MDEzMDIxNDcyMzQyMDU4OTYxMDkxMTE2MTg5NTQ5NTY0Nzc4OTAwNjY0OTc4NTI2NDczODE0MTI5OTEzNTQxNDI3MiJdfQ")
-	assert.NoError(t, err)
-
-	verificationKey, err := ioutil.ReadFile("/tmp/auth/verification_key.json")
-	assert.Nil(t, err)
-
-	isValid, err := token.Verify(verificationKey)
-	assert.NoError(t, err)
-	assert.True(t, isValid)
-
 }

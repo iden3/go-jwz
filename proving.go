@@ -46,6 +46,7 @@ func GetAlgorithms() (algs []string) {
 	return
 }
 
+// ProofInputsPreparerHandlerFunc prepares inputs using hash message and circuit id
 type ProofInputsPreparerHandlerFunc func(hash []byte, circuitID circuits.CircuitID) ([]byte, error)
 
 // Prepare function is responsible to call provided handler for inputs preparation

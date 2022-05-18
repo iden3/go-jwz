@@ -15,7 +15,7 @@ import (
 const groth16 string = "groth16"
 const authCircuit string = "auth"
 
-// ProvingMethodGroth16 defines proofs family
+// ProvingMethodGroth16Auth defines proofs family and specific circuit
 type ProvingMethodGroth16Auth struct {
 	alg       string
 	circuitID string
@@ -26,6 +26,7 @@ var (
 	ProvingMethodGroth16AuthInstance *ProvingMethodGroth16Auth
 )
 
+// nolint : used for init proving method instance
 func init() {
 	ProvingMethodGroth16AuthInstance = &ProvingMethodGroth16Auth{alg: groth16, circuitID: authCircuit}
 	RegisterProvingMethod(ProvingMethodGroth16AuthInstance.alg, func() ProvingMethod {
