@@ -14,6 +14,8 @@ import (
 type HeaderKey string
 
 const (
+
+	// HeaderType is 'typ' header, so we can set specific typ
 	HeaderType HeaderKey = "typ" // we allow to set typ of token
 
 	headerCritical  HeaderKey = "crit"
@@ -62,11 +64,11 @@ type rawJSONWebZeroknowledge struct {
 }
 
 // setHeader set headers for jwz
-func (token *Token) setDefaultHeaders(zkpAlg, circuitId string) error {
+func (token *Token) setDefaultHeaders(zkpAlg, circuitID string) error {
 	headers := map[HeaderKey]interface{}{
 		headerAlg:       zkpAlg,
 		headerCritical:  []HeaderKey{headerCircuitID},
-		headerCircuitID: circuitId,
+		headerCircuitID: circuitID,
 		HeaderType:      "JWZ",
 	}
 
@@ -198,7 +200,7 @@ func (token *Token) ParsePubSignals(out circuits.PubSignalsUnmarshaller) error {
 	return err
 }
 
-// Prove creates and returns a complete, prooved JWZ.
+// Prove creates and returns a complete, proved JWZ.
 // The token is proven using the Proving Method specified in the token.
 func (token *Token) Prove(provingKey, wasm []byte) (string, error) {
 
@@ -213,10 +215,12 @@ func (token *Token) Prove(provingKey, wasm []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	inputs, err := token.inputsPreparer.Prepare(msgHash, circuits.CircuitID(token.CircuitID))
 	if err != nil {
 		return "", err
 	}
+
 	proof, err := token.Method.Prove(inputs, provingKey, wasm)
 	if err != nil {
 		return "", err

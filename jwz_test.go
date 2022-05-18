@@ -1,43 +1,18 @@
 package jwz
 
 import (
-	"context"
 	"encoding/base64"
 	"encoding/json"
 	"github.com/iden3/go-circuits"
-	circuitsTesting "github.com/iden3/go-circuits/testing"
 	"github.com/iden3/go-rapidsnark/types"
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
-	"math/big"
+	"os"
 	"testing"
 )
 
 func MockPrepareAuthInputs(hash []byte, circuitID circuits.CircuitID) ([]byte, error) {
-	privKeyHex := "28156abe7fe2fd433dc9df969286b96666489bac508612d0e16593e944c4f69f"
-
-	challenge := new(big.Int).SetBytes(hash)
-
-	identifier, claim, state, claimsTree, revTree, rootsTree, claimEntryMTP, claimNonRevMTP, signature, _ := circuitsTesting.AuthClaimFullInfo(context.Background(), privKeyHex, challenge)
-	treeState := circuits.TreeState{
-		State:          state,
-		ClaimsRoot:     claimsTree.Root(),
-		RevocationRoot: revTree.Root(),
-		RootOfRoots:    rootsTree.Root(),
-	}
-
-	inputs := circuits.AuthInputs{
-		ID: identifier,
-		AuthClaim: circuits.Claim{
-			Claim:       claim,
-			Proof:       claimEntryMTP,
-			TreeState:   treeState,
-			NonRevProof: &circuits.ClaimNonRevStatus{TreeState: treeState, Proof: claimNonRevMTP},
-		},
-		Signature: signature,
-		Challenge: challenge,
-	}
-	return inputs.InputsMarshal()
+	// hash is already signed
+	return []byte(`{"userAuthClaim":["304427537360709784173770334266246861770","0","17640206035128972995519606214765283372613874593503528180869261482403155458945","20634138280259599560273310290025659992320584624461316485434108770067472477956","15930428023331155902","0","0","0"],"userAuthClaimMtp":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"userAuthClaimNonRevMtp":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"userAuthClaimNonRevMtpAuxHi":"0","userAuthClaimNonRevMtpAuxHv":"0","userAuthClaimNonRevMtpNoAux":"1","challenge":"19054333970885023780123560936675456700861469068603321884718748961750930466794","challengeSignatureR8x":"4219150445599866015975338408000561684366422973912091598548631071677167824366","challengeSignatureR8y":"12598735963096034383552425395289278326931986118036778264141841465661466935045","challengeSignatureS":"482456738038705898703405023807226003538372788878082557708969187456494192709","userClaimsTreeRoot":"9763429684850732628215303952870004997159843236039795272605841029866455670219","userID":"379949150130214723420589610911161895495647789006649785264738141299135414272","userRevTreeRoot":"0","userRootsTreeRoot":"0","userState":"18656147546666944484453899241916469544090258810192803949522794490493271005313"}`), nil
 }
 
 func TestNewWithPayload(t *testing.T) {
@@ -58,13 +33,13 @@ func TestToken_Prove(t *testing.T) {
 
 	var provingKey, verificationKey, wasm []byte
 
-	provingKey, err = ioutil.ReadFile("./testdata/circuit_final.zkey")
+	provingKey, err = os.ReadFile("./testdata/circuit_final.zkey")
 	assert.Nil(t, err)
 
-	wasm, err = ioutil.ReadFile("./testdata/circuit.wasm")
+	wasm, err = os.ReadFile("./testdata/circuit.wasm")
 	assert.Nil(t, err)
 
-	verificationKey, err = ioutil.ReadFile("./testdata/verification_key.json")
+	verificationKey, err = os.ReadFile("./testdata/verification_key.json")
 	assert.Nil(t, err)
 
 	assert.NoError(t, err)
