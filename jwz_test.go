@@ -58,13 +58,13 @@ func TestToken_Prove(t *testing.T) {
 
 	var provingKey, verificationKey, wasm []byte
 
-	provingKey, err = ioutil.ReadFile("/tmp/auth/circuit_final.zkey")
+	provingKey, err = ioutil.ReadFile("./testdata/circuit_final.zkey")
 	assert.Nil(t, err)
 
-	wasm, err = ioutil.ReadFile("/tmp/auth/circuit.wasm")
+	wasm, err = ioutil.ReadFile("./testdata/circuit.wasm")
 	assert.Nil(t, err)
 
-	verificationKey, err = ioutil.ReadFile("/tmp/auth/verification_key.json")
+	verificationKey, err = ioutil.ReadFile("./testdata/verification_key.json")
 	assert.Nil(t, err)
 
 	assert.NoError(t, err)
@@ -117,18 +117,4 @@ func TestToken_ParseWithOutputs(t *testing.T) {
 	msgHash, err := token.GetMessageHash()
 	assert.NoError(t, err)
 	assert.Equal(t, msgHash, outs.Challenge.Bytes())
-}
-
-func TestToken_Verify(t *testing.T) {
-
-	token, err := Parse("eyJhbGciOiJncm90aDE2IiwiY2lyY3VpdElkIjoiYXV0aCIsImNyaXQiOlsiY2lyY3VpdElkIl0sInR5cCI6IkpXWiJ9.bXltZXNzYWdl.eyJwcm9vZiI6eyJwaV9hIjpbIjYzMzY0ODgxNzk0NjAwNDc3NjAwMTcxMDIwMDU5ODQ0OTk5NzI0NTg3ODc2MzM5MjEyMTg3MTYyMzQ0MzMzMTkzOTE2ODA3ODkxNjkiLCIxODE5MzYwNjcwMzM3MjQwNDcwNTk2NjMwNjE2NTE0OTI4NDE5MDE5NjY4NDM2NTQ0OTY2MzA1NzA1MzM1MDc4MDQwNjAxMDU3ODgyNSIsIjEiXSwicGlfYiI6W1siNDc3NzAwNzIxMjU4NjUyOTc2NDk2MjcwNjE2NzM3MTU1ODUzNDA3NzY2MDg3Mjg1ODE2NjgwMzQ4ODc2MTU3NTYxNTU1NjcxNjAxMyIsIjEyMTk3ODk0NjEwNjU3MzA1MTg5MjE5OTg1NDA5OTA2NTM0MDkyNDQzNzU0MTQxNjE3OTAyMDQwMjYwMTgwNzM1MTY0Njk1NDUxMzc2Il0sWyIxMzI4NzQyNjMyNDAyMzEyMjAwMjk2MDY0Mzc4ODE0NjY4MzE4NzcxNzk0NDQwOTg1NDEzNDEwMTIyOTE4NDk5MDc2NDA4MTEyNDI1NSIsIjI2NTQ3NTMzMDY0NzgyODk2MzQyOTA3OTQxMDY1MjEzNzcyMzc1MjE2NDI5MzA2MTgwNTA0ODAzMzg3Njc1NTk5NDEwMTQyODQ5NTUiXSxbIjEiLCIwIl1dLCJwaV9jIjpbIjkzMjkwNzI2MzIwMDQ0OTAzMDc2MzEyNDE0ODEwNTQ2NDUyMzUzMTg2ODIwNjg1ODc3MDkzNjQyNzU5NTIxODUwNjE3OTM3NzgzOTMiLCIyNzM5ODMzMzc2MjExODEzNDY4NDExOTgzNzc4ODY4MTg4MDkxOTUxMjM2NDAxNTY3NjMyNDQ5NDQzMjc1NzgwOTMwOTEyNDkwMzA0IiwiMSJdLCJwcm90b2NvbCI6Imdyb3RoMTYifSwicHViX3NpZ25hbHMiOlsiMTkwNTQzMzM5NzA4ODUwMjM3ODAxMjM1NjA5MzY2NzU0NTY3MDA4NjE0NjkwNjg2MDMzMjE4ODQ3MTg3NDg5NjE3NTA5MzA0NjY3OTQiLCIxODY1NjE0NzU0NjY2Njk0NDQ4NDQ1Mzg5OTI0MTkxNjQ2OTU0NDA5MDI1ODgxMDE5MjgwMzk0OTUyMjc5NDQ5MDQ5MzI3MTAwNTMxMyIsIjM3OTk0OTE1MDEzMDIxNDcyMzQyMDU4OTYxMDkxMTE2MTg5NTQ5NTY0Nzc4OTAwNjY0OTc4NTI2NDczODE0MTI5OTEzNTQxNDI3MiJdfQ")
-	assert.NoError(t, err)
-
-	verificationKey, err := ioutil.ReadFile("/tmp/auth/verification_key.json")
-	assert.Nil(t, err)
-
-	isValid, err := token.Verify(verificationKey)
-	assert.NoError(t, err)
-	assert.True(t, isValid)
-
 }
