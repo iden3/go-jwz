@@ -31,11 +31,10 @@ func Hash(message []byte) (*big.Int, error) {
 	if utils.CheckBigIntInField(bi) {
 		m = bi
 	} else {
-		bi.DivMod(bi, constants.Q, m)
+		m = bi.Mod(bi, constants.Q)
 	}
 
 	// 2. poseidon
-
 	res, err := poseidon.Hash([]*big.Int{m})
 
 	if err != nil {
