@@ -27,7 +27,7 @@ func Hash(message []byte) (*big.Int, error) {
 	bi := new(big.Int).SetBytes(bs)
 
 	// 3. check if it's in field
-	m := new(big.Int)
+	var m *big.Int
 	if utils.CheckBigIntInField(bi) {
 		m = bi
 	} else {
