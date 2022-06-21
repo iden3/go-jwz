@@ -3,7 +3,7 @@ module github.com/iden3/go-jwz
 go 1.18
 
 require (
-	github.com/iden3/go-circuits v0.0.41
+	github.com/iden3/go-circuits v0.1.0
 	github.com/iden3/go-iden3-crypto v0.0.13
 	github.com/iden3/go-rapidsnark/prover v0.0.1
 	github.com/iden3/go-rapidsnark/types v0.0.1
@@ -16,7 +16,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dchest/blake512 v1.0.0 // indirect
 	github.com/ethereum/go-ethereum v1.10.17 // indirect
-	github.com/iden3/go-iden3-core v0.0.16 // indirect
+	github.com/iden3/go-iden3-core v0.1.0 // indirect
 	github.com/iden3/go-merkletree-sql v1.0.1 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
