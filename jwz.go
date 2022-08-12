@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/iden3/go-circuits"
 	"github.com/iden3/go-rapidsnark/types"
-	"strings"
 )
 
 // HeaderKey represents type for jwz headers keys
