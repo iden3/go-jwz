@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/iden3/go-circuits v0.1.0
 	github.com/iden3/go-iden3-crypto v0.0.13
-	github.com/iden3/go-rapidsnark/prover v0.0.2-0.20220812203643-0d0d0a91ac86
+	github.com/iden3/go-rapidsnark/prover v0.0.2-0.20220812212251-7983dbc6b4f2
 	github.com/iden3/go-rapidsnark/types v0.0.1
 	github.com/iden3/go-rapidsnark/verifier v0.0.1
 	github.com/iden3/go-rapidsnark/witness v0.0.1
@@ -28,5 +28,5 @@ require (
 )
 
 //replace (
-//	github.com/iden3/go-rapidsnark/prover v0.0.2 => ../go-rapidsnark/prover
+//	github.com/iden3/go-rapidsnark/prover => ../go-rapidsnark/prover
 //)
