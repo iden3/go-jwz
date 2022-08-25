@@ -10,7 +10,7 @@ on:
       - develop
 jobs:
   lint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Install Go
         uses: actions/setup-go@v1
