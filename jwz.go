@@ -47,10 +47,7 @@ func NewWithPayload(prover ProvingMethod, payload []byte, inputsPreparer ProofIn
 		Method:         prover,
 		inputsPreparer: inputsPreparer,
 	}
-	err := token.setDefaultHeaders(prover.Alg(), prover.CircuitID())
-	if err != nil {
-		return nil, err
-	}
+	token.setDefaultHeaders(prover.Alg(), prover.CircuitID())
 	token.setPayload(payload)
 
 	return token, nil
@@ -65,7 +62,7 @@ type rawJSONWebZeroknowledge struct {
 }
 
 // setHeader set headers for jwz
-func (token *Token) setDefaultHeaders(zkpAlg, circuitID string) error {
+func (token *Token) setDefaultHeaders(zkpAlg, circuitID string) {
 	headers := map[HeaderKey]interface{}{
 		headerAlg:       zkpAlg,
 		headerCritical:  []HeaderKey{headerCircuitID},
@@ -74,7 +71,6 @@ func (token *Token) setDefaultHeaders(zkpAlg, circuitID string) error {
 	}
 
 	token.raw.Header = headers
-	return nil
 }
 
 // WithHeader allows to set or redefine default headers
