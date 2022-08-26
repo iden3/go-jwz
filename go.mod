@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/iden3/go-circuits v0.1.0
 	github.com/iden3/go-iden3-crypto v0.0.13
-	github.com/iden3/go-rapidsnark/prover v0.0.2-0.20220825165610-4e211b8ed7a2
+	github.com/iden3/go-rapidsnark/prover v0.0.3
 	github.com/iden3/go-rapidsnark/types v0.0.1
 	github.com/iden3/go-rapidsnark/verifier v0.0.1
 	github.com/iden3/go-rapidsnark/witness v0.0.1
@@ -26,4 +26,3 @@ require (
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
-
