@@ -7,7 +7,7 @@ run:
   # because GitHub has some amount of older hardware used for action runners.allow-parallel-runners.
   # For other platforms this flag is ignored
   build-tags:
-    - noasm
+    - rapidsnark_noasm
   skip-dirs:
     - vendor
 

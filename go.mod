@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/iden3/go-circuits v0.1.0
 	github.com/iden3/go-iden3-crypto v0.0.13
-	github.com/iden3/go-rapidsnark/prover v0.0.4-0.20220828232908-ca2d7e82584c
+	github.com/iden3/go-rapidsnark/prover v0.0.4-0.20220829001537-985b9c761cc2
 	github.com/iden3/go-rapidsnark/types v0.0.1
 	github.com/iden3/go-rapidsnark/verifier v0.0.1
 	github.com/iden3/go-rapidsnark/witness v0.0.1
