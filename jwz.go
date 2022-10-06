@@ -79,6 +79,11 @@ func (token *Token) WithHeader(key HeaderKey, value interface{}) error {
 	return nil
 }
 
+// GetHeader returns header
+func (token *Token) GetHeader() map[HeaderKey]interface{} {
+	return token.raw.Header
+}
+
 // setPayload  set payload for jwz
 func (token *Token) setPayload(payload []byte) {
 	token.raw.Payload = payload
