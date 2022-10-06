@@ -16,7 +16,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dchest/blake512 v1.0.0 // indirect
 	github.com/ethereum/go-ethereum v1.10.24 // indirect
-	github.com/iden3/go-iden3-core v0.1.0 // indirect
+	github.com/iden3/go-iden3-core v0.1.1-0.20220923135459-cda2655fb250 // indirect
 	github.com/iden3/go-merkletree-sql v1.0.1 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
