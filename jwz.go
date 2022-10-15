@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/big"
 	"strings"
 
 	"github.com/iden3/go-circuits"
@@ -245,6 +246,8 @@ func (token *Token) Verify(verificationKey []byte) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	fmt.Println("msgHash:", new(big.Int).SetBytes(msgHash).String())
+
 	// 2. verify that zkp is valid
 	err = token.Method.Verify(msgHash, token.ZkProof, verificationKey)
 	if err != nil {

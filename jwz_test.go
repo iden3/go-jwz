@@ -3,16 +3,22 @@ package jwz
 import (
 	"encoding/base64"
 	"encoding/json"
+	"os"
+	"testing"
+
 	"github.com/iden3/go-circuits"
 	"github.com/iden3/go-rapidsnark/types"
 	"github.com/stretchr/testify/assert"
-	"os"
-	"testing"
 )
 
-func MockPrepareAuthInputs(hash []byte, circuitID circuits.CircuitID) ([]byte, error) {
+func MockPrepareAuthInputs(_ []byte, _ circuits.CircuitID) ([]byte, error) {
 	// hash is already signed
 	return []byte(`{"userAuthClaim":["304427537360709784173770334266246861770","0","17640206035128972995519606214765283372613874593503528180869261482403155458945","20634138280259599560273310290025659992320584624461316485434108770067472477956","15930428023331155902","0","0","0"],"userAuthClaimMtp":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"userAuthClaimNonRevMtp":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"userAuthClaimNonRevMtpAuxHi":"0","userAuthClaimNonRevMtpAuxHv":"0","userAuthClaimNonRevMtpNoAux":"1","challenge":"19054333970885023780123560936675456700861469068603321884718748961750930466794","challengeSignatureR8x":"4219150445599866015975338408000561684366422973912091598548631071677167824366","challengeSignatureR8y":"12598735963096034383552425395289278326931986118036778264141841465661466935045","challengeSignatureS":"482456738038705898703405023807226003538372788878082557708969187456494192709","userClaimsTreeRoot":"9763429684850732628215303952870004997159843236039795272605841029866455670219","userID":"379949150130214723420589610911161895495647789006649785264738141299135414272","userRevTreeRoot":"0","userRootsTreeRoot":"0","userState":"18656147546666944484453899241916469544090258810192803949522794490493271005313"}`), nil
+}
+
+func MockPrepareAuthV2Inputs(_ []byte, _ circuits.CircuitID) ([]byte, error) {
+	// hash is already signed
+	return []byte(`{"userGenesisID":"379949150130214723420589610911161895495647789006649785264738141299135414272","userSalt":"10","userAuthClaim":["304427537360709784173770334266246861770","0","17640206035128972995519606214765283372613874593503528180869261482403155458945","20634138280259599560273310290025659992320584624461316485434108770067472477956","15930428023331155902","0","0","0"],"userAuthClaimMtp":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"userAuthClaimNonRevMtp":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"userAuthClaimNonRevMtpAuxHi":"0","userAuthClaimNonRevMtpAuxHv":"0","userAuthClaimNonRevMtpNoAux":"1","challenge":"6110517768249559238193477435454792024732173865488900270849624328650765691494","challengeSignatureR8x":"2273647433349372574162365571517182161856978101733725351784171216877260126349","challengeSignatureR8y":"20921152258050920729820249883788091534543872328111915977763626674391221282579","challengeSignatureS":"1281122186572874955530253539759994983000852038854525332258204958436946993067","userClaimsTreeRoot":"9763429684850732628215303952870004997159843236039795272605841029866455670219","userRevTreeRoot":"0","userRootsTreeRoot":"0","userState":"18656147546666944484453899241916469544090258810192803949522794490493271005313","globalSmtRoot":"13891407091237035626910338386637210028103224489833886255774452947213913989795","globalSmtMtp":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"globalSmtMtpAuxHi":"321655963459726004040127369337727353299407142334036950741528344494565949440","globalSmtMtpAuxHv":"1257746809182882563786560928809910818663538703587513060503018952434273712929","globalSmtMtpNoAux":"0"}`), nil
 }
 
 func TestNewWithPayload(t *testing.T) {
@@ -92,4 +98,31 @@ func TestToken_ParseWithOutputs(t *testing.T) {
 	msgHash, err := token.GetMessageHash()
 	assert.NoError(t, err)
 	assert.Equal(t, msgHash, outs.Challenge.Bytes())
+}
+
+func TestTokenAuthV2Prove(t *testing.T) {
+	payload := []byte("mymessage")
+	token, err := NewWithPayload(ProvingMethodGroth16AuthV2Instance, payload, MockPrepareAuthV2Inputs)
+	assert.NoError(t, err)
+
+	var provingKey, verificationKey, wasm []byte
+
+	provingKey, err = os.ReadFile("./testdata/authV2/circuit_final.zkey")
+	assert.NoError(t, err)
+
+	wasm, err = os.ReadFile("./testdata/authV2/circuit.wasm")
+	assert.Nil(t, err)
+
+	verificationKey, err = os.ReadFile("./testdata/authV2/verification_key.json")
+	assert.NoError(t, err)
+
+	tokenString, err := token.Prove(provingKey, wasm)
+
+	assert.NoError(t, err)
+	t.Log(tokenString)
+
+	isValid, err := token.Verify(verificationKey)
+	assert.NoError(t, err)
+	assert.True(t, isValid)
+
 }
