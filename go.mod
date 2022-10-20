@@ -3,7 +3,7 @@ module github.com/iden3/go-jwz
 go 1.18
 
 require (
-	github.com/iden3/go-circuits v0.1.0
+	github.com/iden3/go-circuits v0.1.1-0.20221020114837-1da2f9fdbd5f
 	github.com/iden3/go-iden3-crypto v0.0.13
 	github.com/iden3/go-rapidsnark/prover v0.0.5
 	github.com/iden3/go-rapidsnark/types v0.0.1

@@ -5,8 +5,8 @@ github.com/dchest/blake512 v1.0.0 h1:oDFEQFIqFSeuA34xLtXZ/rWxCXdSjirjzPhey5EUvmA
 github.com/dchest/blake512 v1.0.0/go.mod h1:FV1x7xPPLWukZlpDpWQ88rF/SFwZ5qbskrzhLMB92JI=
 github.com/ethereum/go-ethereum v1.10.24 h1:16KV6vdc4T4VHn6UgGlTFs0S71YpbUpZd6BmGcxFXag=
 github.com/ethereum/go-ethereum v1.10.24/go.mod h1:EYFyF19u3ezGLD4RqOkLq+ZCXzYbLoNDdZlMt7kyKFg=
-github.com/iden3/go-circuits v0.1.0 h1:Ry/V1WlOuwPwGhIx/ZJJelz0Jx7h6g2cto6gui/0VWA=
-github.com/iden3/go-circuits v0.1.0/go.mod h1:pd69vG2pg8qvxYTbb7WHrZ41OF5bizgs5E/dkBggUag=
+github.com/iden3/go-circuits v0.1.1-0.20221020114837-1da2f9fdbd5f h1:2y5LYBRi5J90x+nX9nOAdFbInSQnoNh5qoutm9V3tv0=
+github.com/iden3/go-circuits v0.1.1-0.20221020114837-1da2f9fdbd5f/go.mod h1:pd69vG2pg8qvxYTbb7WHrZ41OF5bizgs5E/dkBggUag=
 github.com/iden3/go-iden3-core v0.1.0 h1:bsTRmigwDU9MtzPSjWyd+WL/ZnWGDRjDO4I0e99aJdo=
 github.com/iden3/go-iden3-core v0.1.0/go.mod h1:wJtcMK/bSazyW/JrQaRrbpUMgSMg79Pke3xgtfPxDnQ=
 github.com/iden3/go-iden3-crypto v0.0.13 h1:ixWRiaqDULNyIDdOWz2QQJG5t4PpNHkQk2P6GV94cok=
