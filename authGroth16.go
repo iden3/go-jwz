@@ -3,48 +3,49 @@ package jwz
 import (
 	"encoding/json"
 	"errors"
+	"math/big"
+
 	"github.com/iden3/go-circuits"
 	"github.com/iden3/go-rapidsnark/prover"
 	"github.com/iden3/go-rapidsnark/types"
 	"github.com/iden3/go-rapidsnark/verifier"
 	"github.com/iden3/go-rapidsnark/witness"
-
-	"math/big"
 )
 
-const groth16 string = "groth16"
-const authCircuit string = "auth"
+const (
+	Groth16 string = "groth16"
+)
 
 // ProvingMethodGroth16Auth defines proofs family and specific circuit
 type ProvingMethodGroth16Auth struct {
-	alg       string
-	circuitID string
+	ProvingMethodAlg
 }
 
-// ProvingMethodGroth16AuthInstance instance for groth16 proving method with an auth circuit
+// ProvingMethodGroth16AuthInstance instance for Groth16 proving method with an auth circuit
 var (
 	ProvingMethodGroth16AuthInstance *ProvingMethodGroth16Auth
 )
 
 // nolint : used for init proving method instance
 func init() {
-	ProvingMethodGroth16AuthInstance = &ProvingMethodGroth16Auth{alg: groth16, circuitID: authCircuit}
-	RegisterProvingMethod(ProvingMethodGroth16AuthInstance.alg, func() ProvingMethod {
+	ProvingMethodGroth16AuthInstance = &ProvingMethodGroth16Auth{ProvingMethodAlg{Alg: Groth16,
+		CircuitID: string(circuits.AuthCircuitID)}}
+	RegisterProvingMethod(ProvingMethodGroth16AuthInstance.ProvingMethodAlg, func() ProvingMethod {
 		return ProvingMethodGroth16AuthInstance
 	})
 }
 
 // Alg returns current zk alg
 func (m *ProvingMethodGroth16Auth) Alg() string {
-	return m.alg
+	return m.ProvingMethodAlg.Alg
 }
 
 // CircuitID returns name of circuit
 func (m *ProvingMethodGroth16Auth) CircuitID() string {
-	return m.circuitID
+	return m.ProvingMethodAlg.CircuitID
 }
 
-// Verify performs groth16 proof verification and checks equality of message hash and proven challenge public signals
+// Verify performs Groth16 proof verification and checks equality of message hash and proven challenge public signals
 func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *types.ZKProof, verificationKey []byte) error {
 
 	var outputs circuits.AuthPubSignals
@@ -65,7 +66,7 @@ func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *types.ZKPro
 	return verifier.VerifyGroth16(*proof, verificationKey)
 }
 
-// Prove generates proof using auth circuit and groth16 alg, checks that proven message hash is set as a part of circuit specific inputs
+// Prove generates proof using auth circuit and Groth16 alg, checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16Auth) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
 	calc, err := witness.NewCircom2WitnessCalculator(wasm, true)

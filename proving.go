@@ -1,12 +1,24 @@
 package jwz
 
 import (
+	"sync"
+
 	"github.com/iden3/go-circuits"
 	"github.com/iden3/go-rapidsnark/types"
-	"sync"
 )
 
-var provingMethods = map[string]func() ProvingMethod{}
+// ProvingMethodAlg defines proofs family and specific circuit
+type ProvingMethodAlg struct {
+	Alg       string
+	CircuitID string
+}
+
+// NewProvingMethodAlg creates a new ProvingMethodAlg
+func NewProvingMethodAlg(alg, circuitID string) ProvingMethodAlg {
+	return ProvingMethodAlg{Alg: alg, CircuitID: circuitID}
+}
+
+var provingMethods = map[ProvingMethodAlg]func() ProvingMethod{}
 var provingMethodLock = new(sync.RWMutex)
 
 // ProvingMethod can be used add new methods for signing or verifying tokens.
@@ -19,14 +31,14 @@ type ProvingMethod interface {
 
 // RegisterProvingMethod registers the "alg" name and a factory function for proving method.
 // This is typically done during init() in the method's implementation
-func RegisterProvingMethod(alg string, f func() ProvingMethod) {
+func RegisterProvingMethod(alg ProvingMethodAlg, f func() ProvingMethod) {
 	provingMethodLock.Lock()
 	defer provingMethodLock.Unlock()
 	provingMethods[alg] = f
 }
 
 // GetProvingMethod retrieves a proving method from an "alg" string
-func GetProvingMethod(alg string) (method ProvingMethod) {
+func GetProvingMethod(alg ProvingMethodAlg) (method ProvingMethod) {
 	provingMethodLock.RLock()
 	defer provingMethodLock.RUnlock()
 	if methodF, ok := provingMethods[alg]; ok {
@@ -36,7 +48,7 @@ func GetProvingMethod(alg string) (method ProvingMethod) {
 }
 
 // GetAlgorithms returns a list of registered "alg" names
-func GetAlgorithms() (algs []string) {
+func GetAlgorithms() (algs []ProvingMethodAlg) {
 	provingMethodLock.RLock()
 	defer provingMethodLock.RUnlock()
 
