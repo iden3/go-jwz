@@ -12,6 +12,8 @@ import (
 	"github.com/iden3/go-rapidsnark/witness"
 )
 
+var AuthV2Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV2CircuitID)}
+
 // ProvingMethodGroth16AuthV2 instance for Groth16 proving method with an authV2 circuit
 type ProvingMethodGroth16AuthV2 struct {
 	ProvingMethodAlg
@@ -24,8 +26,7 @@ var (
 
 // nolint : used for init proving method instance
 func init() {
-	ProvingMethodGroth16AuthV2Instance = &ProvingMethodGroth16AuthV2{ProvingMethodAlg{Alg: Groth16,
-		CircuitID: string(circuits.AuthV2CircuitID)}}
+	ProvingMethodGroth16AuthV2Instance = &ProvingMethodGroth16AuthV2{AuthV2Groth16Alg}
 	RegisterProvingMethod(ProvingMethodGroth16AuthV2Instance.ProvingMethodAlg, func() ProvingMethod {
 		return ProvingMethodGroth16AuthV2Instance
 	})
