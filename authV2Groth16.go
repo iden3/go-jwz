@@ -12,6 +12,7 @@ import (
 	"github.com/iden3/go-rapidsnark/witness"
 )
 
+// AuthV2Groth16Alg its auth v2 alg (groth16 vs auth v2 circuit)
 var AuthV2Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV2CircuitID)}
 
 // ProvingMethodGroth16AuthV2 instance for Groth16 proving method with an authV2 circuit

@@ -1,3 +1,4 @@
+// Package jwz contains implementation of JSON WEB ZERO-Knowledge specification.
 package jwz
 
 import (
@@ -13,9 +14,11 @@ import (
 )
 
 const (
+	// Groth16 alg
 	Groth16 string = "groth16"
 )
 
+// AuthGroth16Alg its first auth v1 alg (groth16 vs auth v1 circuit)
 var AuthGroth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthCircuitID)}
 
 // ProvingMethodGroth16Auth defines proofs family and specific circuit
