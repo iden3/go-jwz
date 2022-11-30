@@ -5,10 +5,10 @@ go 1.18
 require (
 	github.com/iden3/go-circuits v0.1.0
 	github.com/iden3/go-iden3-crypto v0.0.13
-	github.com/iden3/go-rapidsnark/prover v0.0.8-0.20221129112904-b9f8680ca8e2
+	github.com/iden3/go-rapidsnark/prover v0.0.8
 	github.com/iden3/go-rapidsnark/types v0.0.2
-	github.com/iden3/go-rapidsnark/verifier v0.0.4-0.20221129112904-b9f8680ca8e2
-	github.com/iden3/go-rapidsnark/witness v0.0.4-0.20221129112904-b9f8680ca8e2
+	github.com/iden3/go-rapidsnark/verifier v0.0.3
+	github.com/iden3/go-rapidsnark/witness v0.0.3
 	github.com/stretchr/testify v1.7.2
 )
 
