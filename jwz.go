@@ -174,7 +174,7 @@ func (parsed *rawJSONWebZeroknowledge) sanitized() (*Token, error) {
 
 	token.Alg = headers[headerAlg].(string)
 	token.CircuitID = headers[headerCircuitID].(string)
-	token.Method = GetProvingMethod(token.Alg)
+	token.Method = GetProvingMethod(NewProvingMethodAlg(token.Alg, token.CircuitID))
 
 	// parse proof
 
