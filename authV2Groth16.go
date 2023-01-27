@@ -27,8 +27,8 @@ var (
 	ProvingMethodGroth16AuthV2Instance *ProvingMethodGroth16AuthV2
 )
 
-var authV2_wasmHash []byte
-var authV2_witnesscalc *witness.Circom2WitnessCalculator
+var authV2WasmHash []byte
+var authV2WitnessCalc *witness.Circom2WitnessCalculator
 
 // nolint : used for init proving method instance
 func init() {
@@ -77,15 +77,15 @@ func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*ty
 	var err error
 
 	hash := sha256.New().Sum(wasm)
-	if bytes.Equal(hash, authV2_wasmHash) {
-		calc = authV2_witnesscalc
+	if bytes.Equal(hash, authV2WasmHash) {
+		calc = authV2WitnessCalc
 	} else {
 		calc, err = witness.NewCircom2WitnessCalculator(wasm, true)
 		if err != nil {
 			return nil, err
 		}
-		authV2_witnesscalc = calc
-		authV2_wasmHash = hash
+		authV2WitnessCalc = calc
+		authV2WasmHash = hash
 	}
 
 	parsedInputs, err := witness.ParseInputs(inputs)
