@@ -1,6 +1,8 @@
 package jwz
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"math/big"
@@ -24,6 +26,9 @@ type ProvingMethodGroth16AuthV2 struct {
 var (
 	ProvingMethodGroth16AuthV2Instance *ProvingMethodGroth16AuthV2
 )
+
+var authV2_wasmHash []byte
+var authV2_witnesscalc *witness.Circom2WitnessCalculator
 
 // nolint : used for init proving method instance
 func init() {
@@ -68,9 +73,19 @@ func (m *ProvingMethodGroth16AuthV2) Verify(messageHash []byte, proof *types.ZKP
 // checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
-	calc, err := witness.NewCircom2WitnessCalculator(wasm, true)
-	if err != nil {
-		return nil, err
+	var calc *witness.Circom2WitnessCalculator
+	var err error
+
+	hash := sha256.New().Sum(wasm)
+	if bytes.Equal(hash, authV2_wasmHash) {
+		calc = authV2_witnesscalc
+	} else {
+		calc, err = witness.NewCircom2WitnessCalculator(wasm, true)
+		if err != nil {
+			return nil, err
+		}
+		authV2_witnesscalc = calc
+		authV2_wasmHash = hash
 	}
 
 	parsedInputs, err := witness.ParseInputs(inputs)
