@@ -1,10 +1,9 @@
 package jwz
 
 import (
-	"bytes"
-	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"hash/crc32"
 	"math/big"
 
 	"github.com/iden3/go-circuits"
@@ -27,7 +26,7 @@ var (
 	ProvingMethodGroth16AuthV2Instance *ProvingMethodGroth16AuthV2
 )
 
-var authV2WasmHash []byte
+var authV2WasmHash uint32
 var authV2WitnessCalc *witness.Circom2WitnessCalculator
 
 // nolint : used for init proving method instance
@@ -76,8 +75,8 @@ func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*ty
 	var calc *witness.Circom2WitnessCalculator
 	var err error
 
-	hash := sha256.New().Sum(wasm)
-	if bytes.Equal(hash, authV2WasmHash) {
+	hash := crc32.ChecksumIEEE(wasm)
+	if hash == authV2WasmHash {
 		calc = authV2WitnessCalc
 	} else {
 		calc, err = witness.NewCircom2WitnessCalculator(wasm, true)
@@ -97,6 +96,6 @@ func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*ty
 	if err != nil {
 		return nil, err
 	}
-	return prover.Groth16Prover(provingKey, wtnsBytes)
 
+	return prover.Groth16Prover(provingKey, wtnsBytes)
 }
