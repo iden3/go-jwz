@@ -3,6 +3,7 @@ package jwz
 import (
 	"encoding/json"
 	"errors"
+	"hash/crc32"
 	"math/big"
 
 	"github.com/iden3/go-circuits"
@@ -24,6 +25,9 @@ type ProvingMethodGroth16AuthV2 struct {
 var (
 	ProvingMethodGroth16AuthV2Instance *ProvingMethodGroth16AuthV2
 )
+
+var authV2WasmHash uint32
+var authV2WitnessCalc *witness.Circom2WitnessCalculator
 
 // nolint : used for init proving method instance
 func init() {
@@ -68,9 +72,19 @@ func (m *ProvingMethodGroth16AuthV2) Verify(messageHash []byte, proof *types.ZKP
 // checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
-	calc, err := witness.NewCircom2WitnessCalculator(wasm, true)
-	if err != nil {
-		return nil, err
+	var calc *witness.Circom2WitnessCalculator
+	var err error
+
+	hash := crc32.ChecksumIEEE(wasm)
+	if hash == authV2WasmHash {
+		calc = authV2WitnessCalc
+	} else {
+		calc, err = witness.NewCircom2WitnessCalculator(wasm, true)
+		if err != nil {
+			return nil, err
+		}
+		authV2WitnessCalc = calc
+		authV2WasmHash = hash
 	}
 
 	parsedInputs, err := witness.ParseInputs(inputs)
@@ -82,6 +96,6 @@ func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*ty
 	if err != nil {
 		return nil, err
 	}
-	return prover.Groth16Prover(provingKey, wtnsBytes)
 
+	return prover.Groth16Prover(provingKey, wtnsBytes)
 }
