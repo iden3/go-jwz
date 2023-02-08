@@ -121,7 +121,7 @@ func TestToken_ParseWithOutputs(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, "x4jcHP4XHTK3vX58AHZPyHE8kYjneyE6FZRfz7K29", outs.UserID.String())
-	assert.Equal(t, "4325bf7386b102c223cd6109e3b6b1bc813ecb14b2c3332bbd2aa7106e06c002", outs.GlobalRoot.Hex())
+	assert.Equal(t, "4325bf7386b102c223cd6109e3b6b1bc813ecb14b2c3332bbd2aa7106e06c002", outs.GISTRoot.Hex())
 
 	msgHash, err := token.GetMessageHash()
 	assert.NoError(t, err)
