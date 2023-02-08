@@ -7,8 +7,12 @@ github.com/ethereum/go-ethereum v1.10.26 h1:i/7d9RBBwiXCEuyduBQzJw/mKmnvzsN14jqB
 github.com/ethereum/go-ethereum v1.10.26/go.mod h1:EYFyF19u3ezGLD4RqOkLq+ZCXzYbLoNDdZlMt7kyKFg=
 github.com/iden3/go-circuits v1.0.1-alpha.2.0.20221203140910-328bdf7a88ac h1:yoyputXNOC2odWw4TF1WjW0QYEsna16/M57QNQB+wTU=
 github.com/iden3/go-circuits v1.0.1-alpha.2.0.20221203140910-328bdf7a88ac/go.mod h1:HumsT0kT+Iz9rXmWxFYM6V4FqUuUD0QaGnVabnbiL9Q=
+github.com/iden3/go-circuits v1.0.2 h1:6hxPbaxS1YaSZh36K5I8Nb1WAnUdYC9VK5Hqgyhh1EY=
+github.com/iden3/go-circuits v1.0.2/go.mod h1:FPomaHjcVj4H4Czs2PKRoJphWcCc68dh8PDKhNDFZ+U=
 github.com/iden3/go-iden3-core v0.1.1-0.20221108150644-c0b53ebc36d1 h1:9z7630LimQdS3fq4bi9PlaMJoU/GMCMiJtj4a6Wn60c=
 github.com/iden3/go-iden3-core v0.1.1-0.20221108150644-c0b53ebc36d1/go.mod h1:wJtcMK/bSazyW/JrQaRrbpUMgSMg79Pke3xgtfPxDnQ=
+github.com/iden3/go-iden3-core v1.0.0 h1:GNwuYOHZD7hiWjmW+wv26RW9f/JwF4lRQu7/55f2YB8=
+github.com/iden3/go-iden3-core v1.0.0/go.mod h1:wJtcMK/bSazyW/JrQaRrbpUMgSMg79Pke3xgtfPxDnQ=
 github.com/iden3/go-iden3-crypto v0.0.13 h1:ixWRiaqDULNyIDdOWz2QQJG5t4PpNHkQk2P6GV94cok=
 github.com/iden3/go-iden3-crypto v0.0.13/go.mod h1:swXIv0HFbJKobbQBtsB50G7IHr6PbTowutSew/iBEoo=
 github.com/iden3/go-merkletree-sql/v2 v2.0.0 h1:7tMgHCUJCo0jxyM15fjCc7G9Dy0x2rmX+lwa8tqEfho=
