@@ -33,10 +33,10 @@ var (
 
 // nolint : used for init proving method instance
 func init() {
-	ProvingMethodGroth16AuthInstance = &ProvingMethodGroth16Auth{AuthGroth16Alg}
-	RegisterProvingMethod(ProvingMethodGroth16AuthInstance.ProvingMethodAlg, func() ProvingMethod {
-		return ProvingMethodGroth16AuthInstance
-	})
+	//ProvingMethodGroth16AuthInstance = &ProvingMethodGroth16Auth{AuthGroth16Alg}
+	//RegisterProvingMethod(ProvingMethodGroth16AuthInstance.ProvingMethodAlg, func() ProvingMethod {
+	//	return ProvingMethodGroth16AuthInstance
+	//})
 }
 
 // Alg returns current zk alg

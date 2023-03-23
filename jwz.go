@@ -15,13 +15,11 @@ import (
 type HeaderKey string
 
 const (
-
 	// HeaderType is 'typ' header, so we can set specific typ
-	HeaderType HeaderKey = "typ" // we allow to set typ of token
-
-	headerCritical  HeaderKey = "crit"
-	headerAlg       HeaderKey = "alg"
-	headerCircuitID HeaderKey = "circuitId"
+	HeaderType      HeaderKey = "typ" // we allow to set typ of token
+	HeaderCritical  HeaderKey = "crit"
+	HeaderAlg       HeaderKey = "alg"
+	HeaderCircuitID HeaderKey = "circuitId"
 )
 
 // Token represents a JWZ Token.
@@ -34,18 +32,15 @@ type Token struct {
 	Method ProvingMethod // proving method to create a zkp
 
 	raw rawJSONWebZeroknowledge // The raw token.  Populated when you Parse a token
-
-	inputsPreparer ProofInputsPreparerHandlerFunc
 }
 
 // NewWithPayload creates a new Token with the specified proving method and payload.
-func NewWithPayload(prover ProvingMethod, payload []byte, inputsPreparer ProofInputsPreparerHandlerFunc) (*Token, error) {
+func NewWithPayload(prover ProvingMethod, payload []byte) (*Token, error) {
 
 	token := &Token{
-		Alg:            prover.Alg(),
-		CircuitID:      prover.CircuitID(),
-		Method:         prover,
-		inputsPreparer: inputsPreparer,
+		Alg:       prover.Alg(),
+		CircuitID: prover.CircuitID(),
+		Method:    prover,
 	}
 	token.setDefaultHeaders(prover.Alg(), prover.CircuitID())
 	token.setPayload(payload)
@@ -64,9 +59,9 @@ type rawJSONWebZeroknowledge struct {
 // setHeader set headers for jwz
 func (token *Token) setDefaultHeaders(zkpAlg, circuitID string) {
 	headers := map[HeaderKey]interface{}{
-		headerAlg:       zkpAlg,
-		headerCritical:  []HeaderKey{headerCircuitID},
-		headerCircuitID: circuitID,
+		HeaderAlg:       zkpAlg,
+		HeaderCritical:  []HeaderKey{HeaderCircuitID},
+		HeaderCircuitID: circuitID,
 		HeaderType:      "JWZ",
 	}
 
@@ -163,7 +158,7 @@ func (parsed *rawJSONWebZeroknowledge) sanitized() (*Token, error) {
 	}
 
 	// verify that all critical headers are presented
-	criticialHeaders := headers[headerCritical].([]interface{})
+	criticialHeaders := headers[HeaderCritical].([]interface{})
 	for _, key := range criticialHeaders {
 		if _, ok := headers[HeaderKey(key.(string))]; !ok {
 			return nil, fmt.Errorf("iden3/go-jwz: header is listed in critical %v, but not presented", key)
@@ -172,8 +167,8 @@ func (parsed *rawJSONWebZeroknowledge) sanitized() (*Token, error) {
 
 	token.raw.Header = headers
 
-	token.Alg = headers[headerAlg].(string)
-	token.CircuitID = headers[headerCircuitID].(string)
+	token.Alg = headers[HeaderAlg].(string)
+	token.CircuitID = headers[HeaderCircuitID].(string)
 	token.Method = GetProvingMethod(NewProvingMethodAlg(token.Alg, token.CircuitID))
 
 	// parse proof
@@ -204,7 +199,7 @@ func (token *Token) ParsePubSignals(out circuits.PubSignalsUnmarshaller) error {
 
 // Prove creates and returns a complete, proved JWZ.
 // The token is proven using the Proving Method specified in the token.
-func (token *Token) Prove(provingKey, wasm []byte) (string, error) {
+func (token *Token) Prove() (string, error) {
 
 	// all headers must be protected
 	headers, err := json.Marshal(token.raw.Header)
@@ -218,12 +213,12 @@ func (token *Token) Prove(provingKey, wasm []byte) (string, error) {
 		return "", err
 	}
 
-	inputs, err := token.inputsPreparer.Prepare(msgHash, circuits.CircuitID(token.CircuitID))
+	inputs, err := token.Method.PrepareInputs(msgHash)
 	if err != nil {
 		return "", err
 	}
 
-	proof, err := token.Method.Prove(inputs, provingKey, wasm)
+	proof, err := token.Method.Prove(inputs)
 	if err != nil {
 		return "", err
 	}
@@ -238,7 +233,7 @@ func (token *Token) Prove(provingKey, wasm []byte) (string, error) {
 }
 
 // Verify  perform zero knowledge verification.
-func (token *Token) Verify(verificationKey []byte) (bool, error) {
+func (token *Token) Verify() (bool, error) {
 
 	// 1. prepare hash of payload message that had to be proven
 	msgHash, err := token.GetMessageHash()
@@ -246,7 +241,7 @@ func (token *Token) Verify(verificationKey []byte) (bool, error) {
 		return false, err
 	}
 	// 2. verify that zkp is valid
-	err = token.Method.Verify(msgHash, token.ZkProof, verificationKey)
+	err = token.Method.Verify(msgHash, token.ZkProof)
 	if err != nil {
 		return false, err
 	}

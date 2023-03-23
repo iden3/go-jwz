@@ -23,9 +23,10 @@ var provingMethodLock = new(sync.RWMutex)
 
 // ProvingMethod can be used add new methods for signing or verifying tokens.
 type ProvingMethod interface {
-	Verify(messageHash []byte, proof *types.ZKProof, verificationKey []byte) error // Returns nil if proof is valid
-	Prove(inputs []byte, provingKey []byte, wasm []byte) (*types.ZKProof, error)   // Returns proof or error
-	Alg() string                                                                   // Returns the alg identifier for this method (example: 'AUTH-GROTH-16')
+	Verify(messageHash []byte, proof *types.ZKProof) error // Returns nil if proof is valid
+	Prove(inputs []byte) (*types.ZKProof, error)           // Returns proof or error
+	PrepareInputs(hash []byte) ([]byte, error)
+	Alg() string // Returns the alg identifier for this method (example: 'AUTH-GROTH-16')
 	CircuitID() string
 }
 
