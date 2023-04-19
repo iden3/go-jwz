@@ -1,10 +1,11 @@
 package jwz
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
-	"hash/crc32"
 	"math/big"
+	"sync"
 
 	"github.com/iden3/go-circuits"
 	"github.com/iden3/go-rapidsnark/prover"
@@ -19,6 +20,8 @@ var AuthV2Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV2CircuitID
 // ProvingMethodGroth16AuthV2 instance for Groth16 proving method with an authV2 circuit
 type ProvingMethodGroth16AuthV2 struct {
 	ProvingMethodAlg
+	cacheMutex sync.RWMutex
+	cache      map[[sha256.Size]byte]*witness.Circom2WZWitnessCalculator
 }
 
 // ProvingMethodGroth16AuthInstance instance for Groth16 proving method with an authV2 circuit
@@ -26,15 +29,14 @@ var (
 	ProvingMethodGroth16AuthV2Instance *ProvingMethodGroth16AuthV2
 )
 
-var authV2WasmHash uint32
-var authV2WitnessCalc *witness.Circom2WitnessCalculator
-
 // nolint : used for init proving method instance
 func init() {
-	ProvingMethodGroth16AuthV2Instance = &ProvingMethodGroth16AuthV2{AuthV2Groth16Alg}
-	RegisterProvingMethod(ProvingMethodGroth16AuthV2Instance.ProvingMethodAlg, func() ProvingMethod {
-		return ProvingMethodGroth16AuthV2Instance
-	})
+	ProvingMethodGroth16AuthV2Instance = &ProvingMethodGroth16AuthV2{
+		ProvingMethodAlg: AuthV2Groth16Alg,
+		cache:            make(map[[sha256.Size]byte]*witness.Circom2WZWitnessCalculator),
+	}
+	RegisterProvingMethod(ProvingMethodGroth16AuthV2Instance.ProvingMethodAlg,
+		func() ProvingMethod { return ProvingMethodGroth16AuthV2Instance })
 }
 
 // Alg returns current zk alg
@@ -72,19 +74,12 @@ func (m *ProvingMethodGroth16AuthV2) Verify(messageHash []byte, proof *types.ZKP
 // checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
-	var calc *witness.Circom2WitnessCalculator
+	var calc *witness.Circom2WZWitnessCalculator
 	var err error
 
-	hash := crc32.ChecksumIEEE(wasm)
-	if hash == authV2WasmHash {
-		calc = authV2WitnessCalc
-	} else {
-		calc, err = witness.NewCircom2WitnessCalculator(wasm, true)
-		if err != nil {
-			return nil, err
-		}
-		authV2WitnessCalc = calc
-		authV2WasmHash = hash
+	calc, err = m.newWitCalc(wasm)
+	if err != nil {
+		return nil, err
 	}
 
 	parsedInputs, err := witness.ParseInputs(inputs)
@@ -98,4 +93,40 @@ func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*ty
 	}
 
 	return prover.Groth16Prover(provingKey, wtnsBytes)
+}
+
+// Instantiate new NewCircom2WZWitnessCalculator for wasm module or use cached one
+func (m *ProvingMethodGroth16AuthV2) newWitCalc(
+	wasm []byte) (*witness.Circom2WZWitnessCalculator, error) {
+
+	modID := sha256.Sum256(wasm)
+	m.cacheMutex.RLock()
+	witCalc, cacheHit := m.cache[modID]
+	m.cacheMutex.RUnlock()
+
+	if cacheHit {
+		return witCalc, nil
+	}
+
+	witCalc, err := witness.NewCircom2WZWitnessCalculator(wasm)
+	if err != nil {
+		return nil, err
+	}
+
+	var oldWitCalc *witness.Circom2WZWitnessCalculator
+
+	m.cacheMutex.Lock()
+	oldWitCalc, cacheHit = m.cache[modID]
+	if !cacheHit {
+		m.cache[modID] = witCalc
+	}
+	m.cacheMutex.Unlock()
+
+	if cacheHit {
+		// Somebody put a witCalc in the cache while we were creating ours.
+		err = witCalc.Close()
+		return oldWitCalc, err
+	}
+
+	return witCalc, nil
 }
