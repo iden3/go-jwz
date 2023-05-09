@@ -1,4 +1,4 @@
-module github.com/iden3/go-jwz
+module github.com/iden3/go-jwz/v2
 
 go 1.18
 
