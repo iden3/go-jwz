@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"io"
 	"math/big"
 	"sync"
 
@@ -21,7 +22,7 @@ var AuthV2Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV2CircuitID
 type ProvingMethodGroth16AuthV2 struct {
 	ProvingMethodAlg
 	cacheMutex sync.RWMutex
-	cache      map[[sha256.Size]byte]*witness.Circom2WZWitnessCalculator
+	cache      map[[sha256.Size]byte]witness.WitnessCalculator
 }
 
 // ProvingMethodGroth16AuthInstance instance for Groth16 proving method with an authV2 circuit
@@ -33,7 +34,7 @@ var (
 func init() {
 	ProvingMethodGroth16AuthV2Instance = &ProvingMethodGroth16AuthV2{
 		ProvingMethodAlg: AuthV2Groth16Alg,
-		cache:            make(map[[sha256.Size]byte]*witness.Circom2WZWitnessCalculator),
+		cache:            make(map[[sha256.Size]byte]witness.WitnessCalculator),
 	}
 	RegisterProvingMethod(ProvingMethodGroth16AuthV2Instance.ProvingMethodAlg,
 		func() ProvingMethod { return ProvingMethodGroth16AuthV2Instance })
@@ -74,7 +75,7 @@ func (m *ProvingMethodGroth16AuthV2) Verify(messageHash []byte, proof *types.ZKP
 // checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
-	var calc *witness.Circom2WZWitnessCalculator
+	var calc witness.WitnessCalculator
 	var err error
 
 	calc, err = m.newWitCalc(wasm)
@@ -97,7 +98,7 @@ func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*ty
 
 // Instantiate new NewCircom2WZWitnessCalculator for wasm module or use cached one
 func (m *ProvingMethodGroth16AuthV2) newWitCalc(
-	wasm []byte) (*witness.Circom2WZWitnessCalculator, error) {
+	wasm []byte) (witness.WitnessCalculator, error) {
 
 	modID := sha256.Sum256(wasm)
 	m.cacheMutex.RLock()
@@ -113,7 +114,7 @@ func (m *ProvingMethodGroth16AuthV2) newWitCalc(
 		return nil, err
 	}
 
-	var oldWitCalc *witness.Circom2WZWitnessCalculator
+	var oldWitCalc witness.WitnessCalculator
 
 	m.cacheMutex.Lock()
 	oldWitCalc, cacheHit = m.cache[modID]
@@ -124,7 +125,10 @@ func (m *ProvingMethodGroth16AuthV2) newWitCalc(
 
 	if cacheHit {
 		// Somebody put a witCalc in the cache while we were creating ours.
-		err = witCalc.Close()
+		c, ok := witCalc.(io.Closer)
+		if ok {
+			err = c.Close()
+		}
 		return oldWitCalc, err
 	}
 

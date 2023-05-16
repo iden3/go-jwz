@@ -11,6 +11,8 @@ github.com/iden3/go-iden3-core v1.0.0 h1:GNwuYOHZD7hiWjmW+wv26RW9f/JwF4lRQu7/55f
 github.com/iden3/go-iden3-core v1.0.0/go.mod h1:wJtcMK/bSazyW/JrQaRrbpUMgSMg79Pke3xgtfPxDnQ=
 github.com/iden3/go-iden3-crypto v0.0.14 h1:HQnFchY735JRNQxof6n/Vbyon4owj4+Ku+LNAamWV6c=
 github.com/iden3/go-iden3-crypto v0.0.14/go.mod h1:dLpM4vEPJ3nDHzhWFXDjzkn1qHoBeOT/3UEhXsEsP3E=
+github.com/iden3/go-iden3-crypto v0.0.15 h1:4MJYlrot1l31Fzlo2sF56u7EVFeHHJkxGXXZCtESgK4=
+github.com/iden3/go-iden3-crypto v0.0.15/go.mod h1:dLpM4vEPJ3nDHzhWFXDjzkn1qHoBeOT/3UEhXsEsP3E=
 github.com/iden3/go-merkletree-sql/v2 v2.0.0 h1:7tMgHCUJCo0jxyM15fjCc7G9Dy0x2rmX+lwa8tqEfho=
 github.com/iden3/go-merkletree-sql/v2 v2.0.0/go.mod h1:hQbfImlyOJiI+c8FFuFiEMrjpZN0PylRb0aT8uAa+Sg=
 github.com/iden3/go-rapidsnark/prover v0.0.9 h1:Bifg6VtrvrXiYsfv8ULBQweeT75sw3FjV4bbU3vmNQ0=
@@ -21,8 +23,12 @@ github.com/iden3/go-rapidsnark/verifier v0.0.3 h1:DkEe9xiwMTocOr5dH0jUt/NBk49EPu
 github.com/iden3/go-rapidsnark/verifier v0.0.3/go.mod h1:A3R3qr+8QiQtFBghrx94VJrOIr+9mdgrrbmFzJyS9Sg=
 github.com/iden3/go-rapidsnark/witness v0.0.4-0.20230417085122-1eb454a1211a h1:+Wvha13VlgGzeZkvjtkmDQsAQWzCmcANw/eoA3A58/k=
 github.com/iden3/go-rapidsnark/witness v0.0.4-0.20230417085122-1eb454a1211a/go.mod h1:WHX6aKRorVIZqUPwO3yZotqU4UrUs6u3fWRf4IrCQmY=
+github.com/iden3/go-rapidsnark/witness v0.0.7-0.20230516171705-5f0104a1cbe0 h1:4knuqJeqBrRtbfKfDXvsrrCHZJmCMJHz74VN7kSu1ZA=
+github.com/iden3/go-rapidsnark/witness v0.0.7-0.20230516171705-5f0104a1cbe0/go.mod h1:JIMJSak8f6hHtlxK+Gn3u9v3ixKywJkL3mNyf0+tPag=
 github.com/iden3/wasmer-go v0.0.0-20230217163329-62d85068ec47 h1:KW0syFZ7yPr6NRq6Gmun4eHLg4SYp9jmFICPtipvt1A=
 github.com/iden3/wasmer-go v0.0.0-20230217163329-62d85068ec47/go.mod h1:ZnZBAO012M7o+Q1INXLRIxKQgEcH2FuwL0Iga8A4ufg=
+github.com/iden3/wasmer-go v0.0.1 h1:TZKh8Se8B/73PvWrcu+FTU9L1k5XYAmtFbioj7l0Uog=
+github.com/iden3/wasmer-go v0.0.1/go.mod h1:ZnZBAO012M7o+Q1INXLRIxKQgEcH2FuwL0Iga8A4ufg=
 github.com/leanovate/gopter v0.2.9 h1:fQjYxZaynp97ozCzfOyOuAGOU4aU/z37zf/tOujFk7c=
 github.com/mr-tron/base58 v1.2.0 h1:T/HDJBh4ZCPbU39/+c3rRvE0uKBQlU27+QI8LJ4t64o=
 github.com/mr-tron/base58 v1.2.0/go.mod h1:BinMc/sQntlIE1frQmRFPUoPA1Zkr8VRgBdjWI2mNwc=
@@ -39,6 +45,8 @@ github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/tetratelabs/wazero v1.0.1 h1:xyWBoGyMjYekG3mEQ/W7xm9E05S89kJ/at696d/9yuc=
 github.com/tetratelabs/wazero v1.0.1/go.mod h1:wYx2gNRg8/WihJfSDxA1TIL8H+GkfLYm+bIfbblu9VQ=
+github.com/tetratelabs/wazero v1.1.0 h1:EByoAhC+QcYpwSZJSs/aV0uokxPwBgKxfiokSUwAknQ=
+github.com/tetratelabs/wazero v1.1.0/go.mod h1:wYx2gNRg8/WihJfSDxA1TIL8H+GkfLYm+bIfbblu9VQ=
 golang.org/x/crypto v0.7.0 h1:AvwMYaRytfdeVt3u6mLaxYtErKYjxA2OXjJ1HHq6t3A=
 golang.org/x/crypto v0.7.0/go.mod h1:pYwdfH91IfpZVANVyUOhSIPZaFoJGxTFbZhFTx+dXZU=
 golang.org/x/sys v0.6.0 h1:MVltZSvRTcU2ljQOhs94SXPftV6DCNnZViHeQps87pQ=
