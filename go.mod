@@ -9,7 +9,8 @@ require (
 	github.com/iden3/go-rapidsnark/prover v0.0.10
 	github.com/iden3/go-rapidsnark/types v0.0.3
 	github.com/iden3/go-rapidsnark/verifier v0.0.5
-	github.com/iden3/go-rapidsnark/witness v0.0.7-0.20230516171705-5f0104a1cbe0
+	github.com/iden3/go-rapidsnark/witness v0.0.7-0.20230522130411-b106fd58a9a9
+	github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230523113058-6515ad7d0c8d
 	github.com/stretchr/testify v1.8.2
 )
 
@@ -17,7 +18,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dchest/blake512 v1.0.0 // indirect
 	github.com/iden3/go-merkletree-sql/v2 v2.0.4 // indirect
-	github.com/iden3/wasmer-go v0.0.1 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

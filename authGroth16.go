@@ -11,6 +11,7 @@ import (
 	"github.com/iden3/go-rapidsnark/types"
 	"github.com/iden3/go-rapidsnark/verifier"
 	"github.com/iden3/go-rapidsnark/witness"
+	"github.com/iden3/go-rapidsnark/witness/wazero"
 )
 
 const (
@@ -73,7 +74,8 @@ func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *types.ZKPro
 // Prove generates proof using auth circuit and Groth16 alg, checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16Auth) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
-	calc, err := witness.NewCircom2WitnessCalculator(wasm)
+	calc, err := witness.NewCalc(wasm,
+		witness.WithWasmEngine(wazero.NewCircom2WZWitnessCalculator))
 	if err != nil {
 		return nil, err
 	}

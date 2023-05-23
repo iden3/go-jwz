@@ -17,10 +17,10 @@ github.com/iden3/go-rapidsnark/types v0.0.3 h1:f0s1Qdut1qHe1O67+m+xUVRBPwSXnq5j0
 github.com/iden3/go-rapidsnark/types v0.0.3/go.mod h1:ApgcaUxKIgSRA6fAeFxK7p+lgXXfG4oA2HN5DhFlfF4=
 github.com/iden3/go-rapidsnark/verifier v0.0.5 h1:J7y0ovrEjDQoWtZmlrp4tgGng1A9faMeYsQH4igAEqA=
 github.com/iden3/go-rapidsnark/verifier v0.0.5/go.mod h1:KgL3Yr9NehlFDI4EIWVLE3UDUi8ulyjbp7HcXSBfiGI=
-github.com/iden3/go-rapidsnark/witness v0.0.7-0.20230516171705-5f0104a1cbe0 h1:4knuqJeqBrRtbfKfDXvsrrCHZJmCMJHz74VN7kSu1ZA=
-github.com/iden3/go-rapidsnark/witness v0.0.7-0.20230516171705-5f0104a1cbe0/go.mod h1:JIMJSak8f6hHtlxK+Gn3u9v3ixKywJkL3mNyf0+tPag=
-github.com/iden3/wasmer-go v0.0.1 h1:TZKh8Se8B/73PvWrcu+FTU9L1k5XYAmtFbioj7l0Uog=
-github.com/iden3/wasmer-go v0.0.1/go.mod h1:ZnZBAO012M7o+Q1INXLRIxKQgEcH2FuwL0Iga8A4ufg=
+github.com/iden3/go-rapidsnark/witness v0.0.7-0.20230522130411-b106fd58a9a9 h1:NpkuYOKd5E2b1QaFNi9Uo/bMf+iNp/OP8oZqrTgbO2M=
+github.com/iden3/go-rapidsnark/witness v0.0.7-0.20230522130411-b106fd58a9a9/go.mod h1:DRZPAmtvOtj7EHUCxrH8UH0KNgJTxhWf7q1fxiwDK78=
+github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230523113058-6515ad7d0c8d h1:Rv4eHmSe0VGTOUFhyPq9wvdsEEd61ejDd2LH+P3AXpg=
+github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230523113058-6515ad7d0c8d/go.mod h1:1IRqj7yDN7gwSmyCH7EFac064YkasqXon/YsZcS7rrs=
 github.com/leanovate/gopter v0.2.9 h1:fQjYxZaynp97ozCzfOyOuAGOU4aU/z37zf/tOujFk7c=
 github.com/mr-tron/base58 v1.2.0 h1:T/HDJBh4ZCPbU39/+c3rRvE0uKBQlU27+QI8LJ4t64o=
 github.com/mr-tron/base58 v1.2.0/go.mod h1:BinMc/sQntlIE1frQmRFPUoPA1Zkr8VRgBdjWI2mNwc=

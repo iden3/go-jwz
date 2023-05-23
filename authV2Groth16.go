@@ -13,6 +13,7 @@ import (
 	"github.com/iden3/go-rapidsnark/types"
 	"github.com/iden3/go-rapidsnark/verifier"
 	"github.com/iden3/go-rapidsnark/witness"
+	"github.com/iden3/go-rapidsnark/witness/wazero"
 )
 
 // AuthV2Groth16Alg its auth v2 alg (groth16 vs auth v2 circuit)
@@ -22,7 +23,7 @@ var AuthV2Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV2CircuitID
 type ProvingMethodGroth16AuthV2 struct {
 	ProvingMethodAlg
 	cacheMutex sync.RWMutex
-	cache      map[[sha256.Size]byte]witness.WitnessCalculator
+	cache      map[[sha256.Size]byte]witness.Calculator
 }
 
 // ProvingMethodGroth16AuthInstance instance for Groth16 proving method with an authV2 circuit
@@ -34,7 +35,7 @@ var (
 func init() {
 	ProvingMethodGroth16AuthV2Instance = &ProvingMethodGroth16AuthV2{
 		ProvingMethodAlg: AuthV2Groth16Alg,
-		cache:            make(map[[sha256.Size]byte]witness.WitnessCalculator),
+		cache:            make(map[[sha256.Size]byte]witness.Calculator),
 	}
 	RegisterProvingMethod(ProvingMethodGroth16AuthV2Instance.ProvingMethodAlg,
 		func() ProvingMethod { return ProvingMethodGroth16AuthV2Instance })
@@ -75,7 +76,7 @@ func (m *ProvingMethodGroth16AuthV2) Verify(messageHash []byte, proof *types.ZKP
 // checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
-	var calc witness.WitnessCalculator
+	var calc witness.Calculator
 	var err error
 
 	calc, err = m.newWitCalc(wasm)
@@ -98,7 +99,7 @@ func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*ty
 
 // Instantiate new NewCircom2WZWitnessCalculator for wasm module or use cached one
 func (m *ProvingMethodGroth16AuthV2) newWitCalc(
-	wasm []byte) (witness.WitnessCalculator, error) {
+	wasm []byte) (witness.Calculator, error) {
 
 	modID := sha256.Sum256(wasm)
 	m.cacheMutex.RLock()
@@ -109,12 +110,13 @@ func (m *ProvingMethodGroth16AuthV2) newWitCalc(
 		return witCalc, nil
 	}
 
-	witCalc, err := witness.NewCircom2WZWitnessCalculator(wasm)
+	witCalc, err := witness.NewCalc(wasm,
+		witness.WithWasmEngine(wazero.NewCircom2WZWitnessCalculator))
 	if err != nil {
 		return nil, err
 	}
 
-	var oldWitCalc witness.WitnessCalculator
+	var oldWitCalc witness.Calculator
 
 	m.cacheMutex.Lock()
 	oldWitCalc, cacheHit = m.cache[modID]
