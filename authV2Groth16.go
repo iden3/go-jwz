@@ -110,7 +110,7 @@ func (m *ProvingMethodGroth16AuthV2) newWitCalc(
 		return witCalc, nil
 	}
 
-	witCalc, err := witness.NewCalc(wasm,
+	witCalc, err := witness.NewCalculator(wasm,
 		witness.WithWasmEngine(wazero.NewCircom2WZWitnessCalculator))
 	if err != nil {
 		return nil, err
