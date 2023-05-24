@@ -17,10 +17,10 @@ github.com/iden3/go-rapidsnark/types v0.0.3 h1:f0s1Qdut1qHe1O67+m+xUVRBPwSXnq5j0
 github.com/iden3/go-rapidsnark/types v0.0.3/go.mod h1:ApgcaUxKIgSRA6fAeFxK7p+lgXXfG4oA2HN5DhFlfF4=
 github.com/iden3/go-rapidsnark/verifier v0.0.5 h1:J7y0ovrEjDQoWtZmlrp4tgGng1A9faMeYsQH4igAEqA=
 github.com/iden3/go-rapidsnark/verifier v0.0.5/go.mod h1:KgL3Yr9NehlFDI4EIWVLE3UDUi8ulyjbp7HcXSBfiGI=
-github.com/iden3/go-rapidsnark/witness/v2 v2.0.0-20230523130910-2c28846a034f h1:HQIHxHWAnZQCue/I9ju2OZjg1wnZ9gdzDy61snbo0gA=
-github.com/iden3/go-rapidsnark/witness/v2 v2.0.0-20230523130910-2c28846a034f/go.mod h1:3JRjqUfW1hgI9hzLDO0v8z/DUkR0ZUehhYLlnIfRxnA=
-github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230523130910-2c28846a034f h1:Sv90aJF5zguG/2SOUWzCYLFN6mPMBCgrF7M2NqcM+so=
-github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230523130910-2c28846a034f/go.mod h1:OoTnTy8MCpl9C4+/sea6JgrCpx1OuvjQ0CAs5nmJZos=
+github.com/iden3/go-rapidsnark/witness/v2 v2.0.0 h1:mkY6VDfwKVJc83QGKmwVXY2LYepidPrFAxskrjr8UCs=
+github.com/iden3/go-rapidsnark/witness/v2 v2.0.0/go.mod h1:3JRjqUfW1hgI9hzLDO0v8z/DUkR0ZUehhYLlnIfRxnA=
+github.com/iden3/go-rapidsnark/witness/wazero v0.0.1 h1:NSLCXVNWMSn+ilTCNUtIqbu9BViiICasq4FrMNCAds4=
+github.com/iden3/go-rapidsnark/witness/wazero v0.0.1/go.mod h1:UEBifEzw62T6VzIHJeHuUgeLg2U/J9ttf7hOwQEqnYk=
 github.com/leanovate/gopter v0.2.9 h1:fQjYxZaynp97ozCzfOyOuAGOU4aU/z37zf/tOujFk7c=
 github.com/mr-tron/base58 v1.2.0 h1:T/HDJBh4ZCPbU39/+c3rRvE0uKBQlU27+QI8LJ4t64o=
 github.com/mr-tron/base58 v1.2.0/go.mod h1:BinMc/sQntlIE1frQmRFPUoPA1Zkr8VRgBdjWI2mNwc=

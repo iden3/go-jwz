@@ -9,8 +9,8 @@ require (
 	github.com/iden3/go-rapidsnark/prover v0.0.10
 	github.com/iden3/go-rapidsnark/types v0.0.3
 	github.com/iden3/go-rapidsnark/verifier v0.0.5
-	github.com/iden3/go-rapidsnark/witness/v2 v2.0.0-20230523130910-2c28846a034f
-	github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230523130910-2c28846a034f
+	github.com/iden3/go-rapidsnark/witness/v2 v2.0.0
+	github.com/iden3/go-rapidsnark/witness/wazero v0.0.1
 	github.com/stretchr/testify v1.8.2
 )
 
