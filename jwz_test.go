@@ -80,7 +80,7 @@ func BenchmarkToken_Prove(b *testing.B) {
 	assert.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
-		_, err := token.Prove(provingKey, wasm)
+		_, err = token.Prove(provingKey, wasm)
 		assert.NoError(b, err)
 
 		isValid, err := token.Verify(verificationKey)
