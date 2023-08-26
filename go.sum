@@ -3,10 +3,10 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dchest/blake512 v1.0.0 h1:oDFEQFIqFSeuA34xLtXZ/rWxCXdSjirjzPhey5EUvmA=
 github.com/dchest/blake512 v1.0.0/go.mod h1:FV1x7xPPLWukZlpDpWQ88rF/SFwZ5qbskrzhLMB92JI=
-github.com/iden3/go-circuits/v2 v2.0.0-20230519130224-2f1dac1ae3f8 h1:xFuaWhxa02fiv5ldW6hx0AwA+SfKR8W8kGs3XaEaaos=
-github.com/iden3/go-circuits/v2 v2.0.0-20230519130224-2f1dac1ae3f8/go.mod h1:pvB4j6VBl1Yk6GIPibxAG5Bw5Nu5iMZwtv6CoPXnM00=
-github.com/iden3/go-iden3-core/v2 v2.0.0-20230519124718-42b31ff46f37 h1:JPH0tMr8geJO0vLhwTZkopHqm35ARCjCIKNab9rc6QI=
-github.com/iden3/go-iden3-core/v2 v2.0.0-20230519124718-42b31ff46f37/go.mod h1:L9PxhWPvoS9qTb3inEkZBm1RpjHBt+VTwvxssdzbAdw=
+github.com/iden3/go-circuits/v2 v2.0.0 h1:Bw0mpsqeip06d6I2ktgfhTVB7Jk9mSHi8myHZWkoc6w=
+github.com/iden3/go-circuits/v2 v2.0.0/go.mod h1:VIFIp51+IH0hOzjnKhb84bCeyq7hq76zX/C14ua6zh4=
+github.com/iden3/go-iden3-core/v2 v2.0.0 h1:sQEuuq3RLfyYSY8qPiqxQ6YBpGbiAwepHJD/vjf1adA=
+github.com/iden3/go-iden3-core/v2 v2.0.0/go.mod h1:L9PxhWPvoS9qTb3inEkZBm1RpjHBt+VTwvxssdzbAdw=
 github.com/iden3/go-iden3-crypto v0.0.15 h1:4MJYlrot1l31Fzlo2sF56u7EVFeHHJkxGXXZCtESgK4=
 github.com/iden3/go-iden3-crypto v0.0.15/go.mod h1:dLpM4vEPJ3nDHzhWFXDjzkn1qHoBeOT/3UEhXsEsP3E=
 github.com/iden3/go-merkletree-sql/v2 v2.0.4 h1:Dp089P3YNX1BE8+T1tKQHWTtnk84Y/Kr7ZAGTqwscoY=
