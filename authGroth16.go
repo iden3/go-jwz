@@ -73,8 +73,8 @@ func (m *ProvingMethodGroth16Auth) Verify(messageHash []byte, proof *types.ZKPro
 
 // Prove generates proof using auth circuit and Groth16 alg, checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16Auth) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
-	calc, err := witness.NewCalculator(wasm, witness.WithWasmEngine(
-		wazero.NewCircom2WZWitnessCalculator))
+	calc, err := witness.NewCalculator(wasm,
+		witness.WithWasmEngine(wazero.NewCircom2WZWitnessCalculator))
 	if err != nil {
 		return nil, err
 	}
