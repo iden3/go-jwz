@@ -5,9 +5,7 @@ on:
       - main
       - develop
   pull_request:
-    branches:
-      - main
-      - develop
+
 jobs:
   lint:
     runs-on: ubuntu-latest

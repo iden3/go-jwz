@@ -10,7 +10,8 @@ import (
 	"github.com/iden3/go-rapidsnark/prover"
 	"github.com/iden3/go-rapidsnark/types"
 	"github.com/iden3/go-rapidsnark/verifier"
-	"github.com/iden3/go-rapidsnark/witness"
+	"github.com/iden3/go-rapidsnark/witness/v2"
+	"github.com/iden3/go-rapidsnark/witness/wazero"
 )
 
 // AuthV2Groth16Alg its auth v2 alg (groth16 vs auth v2 circuit)
@@ -27,7 +28,7 @@ var (
 )
 
 var authV2WasmHash uint32
-var authV2WitnessCalc *witness.Circom2WitnessCalculator
+var authV2WitnessCalc witness.Calculator
 
 // nolint : used for init proving method instance
 func init() {
@@ -72,14 +73,15 @@ func (m *ProvingMethodGroth16AuthV2) Verify(messageHash []byte, proof *types.ZKP
 // checks that proven message hash is set as a part of circuit specific inputs
 func (m *ProvingMethodGroth16AuthV2) Prove(inputs, provingKey, wasm []byte) (*types.ZKProof, error) {
 
-	var calc *witness.Circom2WitnessCalculator
+	var calc witness.Calculator
 	var err error
 
 	hash := crc32.ChecksumIEEE(wasm)
 	if hash == authV2WasmHash {
 		calc = authV2WitnessCalc
 	} else {
-		calc, err = witness.NewCircom2WitnessCalculator(wasm, true)
+		calc, err = witness.NewCalculator(wasm,
+			witness.WithWasmEngine(wazero.NewCircom2WZWitnessCalculator))
 		if err != nil {
 			return nil, err
 		}
