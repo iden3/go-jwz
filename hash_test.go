@@ -1,10 +1,11 @@
 package jwz
 
 import (
-	"github.com/iden3/go-iden3-crypto/poseidon"
-	"github.com/stretchr/testify/assert"
 	"math/big"
 	"testing"
+
+	"github.com/iden3/go-iden3-crypto/poseidon"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHash(t *testing.T) {

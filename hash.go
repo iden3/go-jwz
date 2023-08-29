@@ -2,10 +2,11 @@ package jwz
 
 import (
 	"crypto/sha256"
+	"math/big"
+
 	"github.com/iden3/go-iden3-crypto/constants"
 	"github.com/iden3/go-iden3-crypto/poseidon"
 	"github.com/iden3/go-iden3-crypto/utils"
-	"math/big"
 )
 
 // Hash returns poseidon hash of big.Int

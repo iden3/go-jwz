@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"sync"
 
-	"github.com/iden3/go-circuits"
+	"github.com/iden3/go-circuits/v2"
 	"github.com/iden3/go-rapidsnark/prover"
 	"github.com/iden3/go-rapidsnark/types"
 	"github.com/iden3/go-rapidsnark/verifier"

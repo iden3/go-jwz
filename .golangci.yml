@@ -1,5 +1,5 @@
 service:
-  golangci-lint-version: 1.48.x
+  golangci-lint-version: 1.54.x
 
 run:
   timeout: 2m
@@ -16,6 +16,10 @@ linters-settings:
     check-shadowing: true
   revive:
     min-confidence: 0.1
+    rules:
+      # Add more comments for exported functions and remove this rule
+      - name: package-comments
+        disabled: true
   maligned:
     suggest-new: true
   goconst:
@@ -41,17 +45,13 @@ linters:
     - govet
     - unconvert
     - megacheck
-    - structcheck
     - gas
     - gocyclo
     - dupl
     - misspell
     - unparam
-    - varcheck
-    - deadcode
     - typecheck
     - ineffassign
-    - varcheck
     - stylecheck
     - gochecknoinits
     - exportloopref
@@ -59,21 +59,21 @@ linters:
     - nakedret
     - gosimple
     - prealloc
+    - unused
+    - goimports
+    - gofmt
+    - errcheck
 
-    ## format - fill free to fix
-#    - errcheck
-#    - gofmt
-#    - goimports
   fast: false
   disable-all: true
 
 issues:
   exclude-rules:
-#    - Fix and remove
+    #    - Fix and remove
     - text: "at least one file in a package should have a package comment"
       linters:
         - stylecheck
-  #    - Fix and remove
+    #    - Fix and remove
     - text: "should have a package comment, unless it's in another file for this package"
       linters:
         - revive
