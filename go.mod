@@ -3,9 +3,9 @@ module github.com/iden3/go-jwz/v2
 go 1.18
 
 require (
-	github.com/iden3/go-circuits/v2 v2.2.0
-	github.com/iden3/go-iden3-core/v2 v2.1.0
-	github.com/iden3/go-iden3-crypto v0.0.15
+	github.com/iden3/go-circuits/v2 v2.2.1
+	github.com/iden3/go-iden3-core/v2 v2.1.1
+	github.com/iden3/go-iden3-crypto v0.0.16
 	github.com/iden3/go-rapidsnark/prover v0.0.10
 	github.com/iden3/go-rapidsnark/types v0.0.3
 	github.com/iden3/go-rapidsnark/verifier v0.0.5
