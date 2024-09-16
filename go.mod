@@ -3,15 +3,15 @@ module github.com/iden3/go-jwz/v2
 go 1.18
 
 require (
-	github.com/iden3/go-circuits/v2 v2.3.0
-	github.com/iden3/go-iden3-core/v2 v2.2.0
-	github.com/iden3/go-iden3-crypto v0.0.16
+	github.com/iden3/go-circuits/v2 v2.4.0
+	github.com/iden3/go-iden3-core/v2 v2.3.1
+	github.com/iden3/go-iden3-crypto v0.0.17
 	github.com/iden3/go-rapidsnark/prover v0.0.10
 	github.com/iden3/go-rapidsnark/types v0.0.3
 	github.com/iden3/go-rapidsnark/verifier v0.0.5
 	github.com/iden3/go-rapidsnark/witness/v2 v2.0.0
 	github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230524142950-0986cf057d4e
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.9.0
 )
 
 require (
