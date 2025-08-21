@@ -20,7 +20,7 @@ import (
 var AuthV3Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV3CircuitID)}
 
 // AuthV3_8_32Groth16Alg its auth v3 alg (groth16 vs auth v3-8-32 circuit)
-var AuthV3_8_32Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV3_8_32_CircuitID)}
+var AuthV3_8_32Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV3_8_32CircuitID)}
 
 // ProvingMethodGroth16AuthV3 instance for Groth16 proving method with an authV3 circuit
 type ProvingMethodGroth16AuthV3 struct {
