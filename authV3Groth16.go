@@ -19,8 +19,8 @@ import (
 // AuthV3Groth16Alg its auth v3 alg (groth16 vs auth v3 circuit)
 var AuthV3Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV3CircuitID)}
 
-// AuthV3_8_32_Groth16Alg its auth v3 alg (groth16 vs auth v3-8-32 circuit)
-var AuthV3_8_32_Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV3_8_32_CircuitID)}
+// AuthV3_8_32Groth16Alg its auth v3 alg (groth16 vs auth v3-8-32 circuit)
+var AuthV3_8_32Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV3_8_32_CircuitID)}
 
 // ProvingMethodGroth16AuthV3 instance for Groth16 proving method with an authV3 circuit
 type ProvingMethodGroth16AuthV3 struct {
@@ -33,7 +33,7 @@ var (
 	// ProvingMethodGroth16AuthV3Instance instance for Groth16 proving method with an authV3 circuit
 	ProvingMethodGroth16AuthV3Instance *ProvingMethodGroth16AuthV3
 	// ProvingMethodGroth16AuthV3_8_32_Instance instance for Groth16 proving method with an authV3 circuit
-	ProvingMethodGroth16AuthV3_8_32_Instance *ProvingMethodGroth16AuthV3
+	ProvingMethodGroth16AuthV3_8_32Instance *ProvingMethodGroth16AuthV3
 )
 
 // nolint : used for init proving method instance
@@ -43,16 +43,16 @@ func init() {
 		cache:            make(map[[sha256.Size]byte]witness.Calculator),
 	}
 
-	ProvingMethodGroth16AuthV3_8_32_Instance = &ProvingMethodGroth16AuthV3{
-		ProvingMethodAlg: AuthV3_8_32_Groth16Alg,
+	ProvingMethodGroth16AuthV3_8_32Instance = &ProvingMethodGroth16AuthV3{
+		ProvingMethodAlg: AuthV3_8_32Groth16Alg,
 		cache:            make(map[[sha256.Size]byte]witness.Calculator),
 	}
 
 	RegisterProvingMethod(ProvingMethodGroth16AuthV3Instance.ProvingMethodAlg,
 		func() ProvingMethod { return ProvingMethodGroth16AuthV3Instance })
 
-	RegisterProvingMethod(ProvingMethodGroth16AuthV3_8_32_Instance.ProvingMethodAlg,
-		func() ProvingMethod { return ProvingMethodGroth16AuthV3_8_32_Instance })
+	RegisterProvingMethod(ProvingMethodGroth16AuthV3_8_32Instance.ProvingMethodAlg,
+		func() ProvingMethod { return ProvingMethodGroth16AuthV3_8_32Instance })
 }
 
 // Alg returns current zk alg
