@@ -2,12 +2,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dchest/blake512 v1.0.0 h1:oDFEQFIqFSeuA34xLtXZ/rWxCXdSjirjzPhey5EUvmA=
 github.com/dchest/blake512 v1.0.0/go.mod h1:FV1x7xPPLWukZlpDpWQ88rF/SFwZ5qbskrzhLMB92JI=
-github.com/iden3/go-circuits/v2 v2.4.1 h1:lBglM94KvkEdkmn5XrmqHjqSlDrksBcQipr9DZ540/Q=
-github.com/iden3/go-circuits/v2 v2.4.1/go.mod h1:LnbASvfhsDajwOYSdPmbQ585KuzwHF/AUS7pICol5ss=
-github.com/iden3/go-circuits/v2 v2.4.2-0.20250821150950-1c06c766830b h1:e8PZ5xYDfiZNk9T+tRH3clUch+yCvaP9FaGEpWTzLc4=
-github.com/iden3/go-circuits/v2 v2.4.2-0.20250821150950-1c06c766830b/go.mod h1:LnbASvfhsDajwOYSdPmbQ585KuzwHF/AUS7pICol5ss=
-github.com/iden3/go-circuits/v2 v2.4.2-0.20250821153452-b1427e402fa5 h1:ZUOY2InmLkb9ZWGySoI8ZuTjqKqykdK/Z+I6avGzwLs=
-github.com/iden3/go-circuits/v2 v2.4.2-0.20250821153452-b1427e402fa5/go.mod h1:LnbASvfhsDajwOYSdPmbQ585KuzwHF/AUS7pICol5ss=
+github.com/iden3/go-circuits/v2 v2.4.2 h1:n4AaL7kIrmeTUGZdn2e1UL9wmzqcO1glkiZGUQXmagQ=
+github.com/iden3/go-circuits/v2 v2.4.2/go.mod h1:LnbASvfhsDajwOYSdPmbQ585KuzwHF/AUS7pICol5ss=
 github.com/iden3/go-iden3-core/v2 v2.3.2 h1:kZq/TiSUmBKO/mvPUucfFE45ugTW+hXXlGT+Jf6CQTg=
 github.com/iden3/go-iden3-core/v2 v2.3.2/go.mod h1:8vmG6y8k9VS7iNoxuiKukKbRQFsMyabCc+i8er07zOs=
 github.com/iden3/go-iden3-crypto v0.0.17 h1:NdkceRLJo/pI4UpcjVah4lN/a3yzxRUGXqxbWcYh9mY=
