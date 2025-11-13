@@ -1,84 +1,71 @@
-service:
-  golangci-lint-version: 1.54.x
+version: "2"
 
 run:
-  timeout: 2m
-  # On linux x86_64 use rapisnark version with disabled asm optimizations
-  # because GitHub has some amount of older hardware used for action runners.allow-parallel-runners.
-  # For other platforms this flag is ignored
   build-tags:
     - rapidsnark_noasm
-  skip-dirs:
-    - vendor
-
-linters-settings:
-  govet:
-    check-shadowing: true
-  revive:
-    min-confidence: 0.1
-    rules:
-      # Add more comments for exported functions and remove this rule
-      - name: package-comments
-        disabled: true
-  maligned:
-    suggest-new: true
-  goconst:
-    min-len: 2
-    min-occurrences: 2
-  misspell:
-    locale: US
-  lll:
-    line-length: 140
-  gocritic:
-    enabled-tags:
-      - performance
-      - style
-      - experimental
-    disabled-checks:
-      - hugeParam
 
 linters:
+  default: none
   enable:
     - bodyclose
-    - megacheck
-    - revive
-    - govet
-    - unconvert
-    - megacheck
-    - gas
-    - gocyclo
     - dupl
-    - misspell
-    - unparam
-    - typecheck
-    - ineffassign
-    - stylecheck
-    - gochecknoinits
-    - exportloopref
-    - gocritic
-    - nakedret
-    - gosimple
-    - prealloc
-    - unused
-    - goimports
-    - gofmt
     - errcheck
-
-  fast: false
-  disable-all: true
-
-issues:
-  exclude-rules:
-    #    - Fix and remove
-    - text: "at least one file in a package should have a package comment"
-      linters:
-        - stylecheck
-    #    - Fix and remove
-    - text: "should have a package comment, unless it's in another file for this package"
-      linters:
-        - revive
-    - path: _test\.go
-      linters:
-        - gosec
-        - dupl
-  exclude-use-default: false
+    - gochecknoinits
+    - gocritic
+    - gocyclo
+    - gosec
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - prealloc
+    - revive
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
+    - lll
+    - goconst
+  settings:
+    goconst:
+      min-len: 2
+      min-occurrences: 2
+    gocritic:
+      disabled-checks:
+        - hugeParam
+      enabled-tags:
+        - performance
+        - style
+        - experimental
+    govet:
+      enable:
+        - shadow
+    lll:
+      line-length: 160
+    misspell:
+      locale: US
+    revive:
+      confidence: 0.1
+      rules:
+        # Add more comments for exported functions and remove this rule
+        - name: package-comments
+          disabled: true
+  exclusions:
+    generated: lax
+    rules:
+      - linters:
+          - staticcheck
+        text: at least one file in a package should have a package comment
+      - linters:
+          - revive
+        text: should have a package comment, unless it's in another file for this package
+      - linters:
+          - dupl
+          - gosec
+          - lll
+        path: _test\.go
+formatters:
+  enable:
+    - gofmt
+    - goimports
+    - gci
