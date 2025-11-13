@@ -10,7 +10,7 @@ import (
 
 func TestHash(t *testing.T) {
 
-	msg := "message"
+	const msg = "message"
 
 	h, err := Hash([]byte(msg))
 	assert.NoError(t, err)
