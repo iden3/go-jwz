@@ -12,6 +12,8 @@ github.com/iden3/go-merkletree-sql/v2 v2.0.6 h1:vsVDImnvnHf7Ggr45ptFOXJyWNA/8IwV
 github.com/iden3/go-merkletree-sql/v2 v2.0.6/go.mod h1:kRhHKYpui5DUsry5RpveP6IC4XMe6iApdV9VChRYuEk=
 github.com/iden3/go-rapidsnark/prover v0.0.14 h1:W4UqUQ3pC7/BSIj0km20cRfCzDxd8LbDNDXdsGHpf2Q=
 github.com/iden3/go-rapidsnark/prover v0.0.14/go.mod h1:mUNLeDXYOW2igiPuhHZHD7kzSp/GjHSWND03aYyECvQ=
+github.com/iden3/go-rapidsnark/prover v0.0.15-0.20251113102832-4a52129c3d66 h1:eQ1nu1C+Nzg5fk9OqqDUSdJO+R+rWtwUFMwT1o6XntE=
+github.com/iden3/go-rapidsnark/prover v0.0.15-0.20251113102832-4a52129c3d66/go.mod h1:mUNLeDXYOW2igiPuhHZHD7kzSp/GjHSWND03aYyECvQ=
 github.com/iden3/go-rapidsnark/types v0.0.3 h1:f0s1Qdut1qHe1O67+m+xUVRBPwSXnq5j0xSrBi0jqM4=
 github.com/iden3/go-rapidsnark/types v0.0.3/go.mod h1:ApgcaUxKIgSRA6fAeFxK7p+lgXXfG4oA2HN5DhFlfF4=
 github.com/iden3/go-rapidsnark/verifier v0.0.5 h1:J7y0ovrEjDQoWtZmlrp4tgGng1A9faMeYsQH4igAEqA=
