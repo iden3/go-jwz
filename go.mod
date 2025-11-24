@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/iden3/go-circuits/v2 v2.4.3
-	github.com/iden3/go-iden3-core/v2 v2.3.2
+	github.com/iden3/go-iden3-core/v2 v2.4.0
 	github.com/iden3/go-iden3-crypto v0.0.17
 	github.com/iden3/go-rapidsnark/prover v0.0.15
 	github.com/iden3/go-rapidsnark/types v0.0.3
