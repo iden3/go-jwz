@@ -247,7 +247,7 @@ func TestTokenAuthV3_ParseWithOutputs(t *testing.T) {
 func TestTokenAuthV3_8_32_DynamicProve(t *testing.T) {
 	payload := []byte("mymessage")
 	const authV3_8_32 = "authV3-8-32"
-	token, err := NewDynamic(ProvingMethodGroth16AuthV3Instance, payload)
+	token, err := NewWithPayload(ProvingMethodGroth16AuthV3Instance, payload, nil)
 	assert.NoError(t, err)
 
 	var provingKey, verificationKey, wasm []byte
@@ -293,7 +293,7 @@ func TestTokenAuthV3_8_32_DynamicProve(t *testing.T) {
 func BenchmarkTokenAuthV3_8_32_DynamicProve(b *testing.B) {
 	payload := []byte("mymessage")
 	const authV3_8_32 = "authV3-8-32"
-	token, err := NewDynamic(ProvingMethodGroth16AuthV3Instance, payload)
+	token, err := NewWithPayload(ProvingMethodGroth16AuthV3Instance, payload, nil)
 	assert.NoError(b, err)
 
 	var provingKey, verificationKey, wasm []byte
