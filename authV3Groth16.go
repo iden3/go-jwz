@@ -49,8 +49,7 @@ func init() {
 	RegisterProvingMethod(ProvingMethodGroth16AuthV3Instance.ProvingMethodAlg,
 		func() ProvingMethod { return ProvingMethodGroth16AuthV3Instance })
 
-	authV3_8_32Groth16Alg := ProvingMethodAlg{Groth16, authV3_8_32}
-	RegisterProvingMethod(authV3_8_32Groth16Alg,
+	RegisterProvingMethod(ProvingMethodAlg{Groth16, authV3_8_32},
 		func() ProvingMethod { return ProvingMethodGroth16AuthV3Instance })
 }
 

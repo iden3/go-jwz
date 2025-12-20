@@ -61,6 +61,9 @@ func GetAlgorithms() (algs []ProvingMethodAlg) {
 // ProofInputsPreparerHandlerFunc prepares inputs using hash message and circuit id
 type ProofInputsPreparerHandlerFunc func(hash []byte, circuitID circuits.CircuitID) ([]byte, error)
 
+// ProofInputsPreparerHandlerFunc is a function type for preparing proof inputs
+type DynamicProofInputsPreparerHandlerFunc func(msgHash []byte) (inputs []byte, targetCircuitID string, err error)
+
 // Prepare function is responsible to call provided handler for inputs preparation
 func (f ProofInputsPreparerHandlerFunc) Prepare(hash []byte, circuitID circuits.CircuitID) ([]byte, error) {
 	return f(hash, circuitID)

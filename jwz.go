@@ -51,11 +51,6 @@ type VerificationKeyParam struct {
 	VerificationKey []byte
 }
 
-// ProofInputsPreparerHandlerFunc is a function type for preparing proof inputs
-type DynamicProofInputsPreparerHandlerFunc func(
-	msgHash []byte,
-) (inputs []byte, targetCircuitID string, err error)
-
 // NewWithPayload creates a new Token with the specified proving method and payload.
 func NewWithPayload(prover ProvingMethod, payload []byte, inputsPreparer ProofInputsPreparerHandlerFunc) (*Token, error) {
 
