@@ -66,20 +66,6 @@ func NewWithPayload(prover ProvingMethod, payload []byte, inputsPreparer ProofIn
 	return token, nil
 }
 
-// NewDynamic creates a new Token with the specified proving method and payload.
-func NewDynamic(prover ProvingMethod, payload []byte) (*Token, error) {
-
-	token := &Token{
-		Alg:       prover.Alg(),
-		CircuitID: prover.CircuitID(),
-		Method:    prover,
-	}
-	token.setDefaultHeaders(prover.Alg(), prover.CircuitID())
-	token.setPayload(payload)
-
-	return token, nil
-}
-
 // rawJSONWebZeroknowledge is json web token with signature presented by zero knowledge proof
 type rawJSONWebZeroknowledge struct {
 	Payload   []byte                    `json:"payload,omitempty"`
@@ -314,6 +300,10 @@ func (token *Token) Prove(provingKey, wasm []byte) (string, error) {
 	msgHash, err := token.GetMessageHash()
 	if err != nil {
 		return "", err
+	}
+
+	if token.inputsPreparer == nil {
+		return "", errors.New("missing inputs preparer")
 	}
 
 	inputs, err := token.inputsPreparer.Prepare(msgHash, circuits.CircuitID(token.CircuitID))
