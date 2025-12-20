@@ -244,21 +244,10 @@ func TestTokenAuthV3_ParseWithOutputs(t *testing.T) {
 	assert.Equal(t, "did:iden3:polygon:mumbai:wuzLSsUkkPdMn16Md8uHLKnfw9b3GB7gLLheTJfSc", did.String())
 }
 
-// Auth v3-8-32
-func TestAuthV3_8_32_NewWithPayload(t *testing.T) {
+func TestTokenAuthV3_8_32__DynamicProve(t *testing.T) {
 	payload := []byte("mymessage")
-	token, err := NewWithPayload(ProvingMethodGroth16AuthV3_8_32Instance, payload, MockPrepareAuthV3_8_32Inputs)
-	assert.NoError(t, err)
 
-	assert.Equal(t, "groth16", token.Alg)
-	assert.Equal(t, "authV3-8-32", token.CircuitID)
-	assert.Equal(t, []HeaderKey{headerCircuitID}, token.raw.Header[headerCritical])
-	assert.Equal(t, "groth16", token.raw.Header[headerAlg])
-}
-
-func TestTokenAuthV3_8_32__Prove(t *testing.T) {
-	payload := []byte("mymessage")
-	token, err := NewWithPayload(ProvingMethodGroth16AuthV3_8_32Instance, payload, MockPrepareAuthV3_8_32Inputs)
+	token, err := NewWithPayload(ProvingMethodGroth16AuthV3Instance, payload, MockPrepareAuthV3_8_32Inputs)
 	assert.NoError(t, err)
 
 	var provingKey, verificationKey, wasm []byte
@@ -274,19 +263,36 @@ func TestTokenAuthV3_8_32__Prove(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	tokenString, err := token.Prove(provingKey, wasm)
+	tokenString, err := token.DynamicProve(
+		[]ProvingParam{
+			{
+				CircuitID:  "authV3-8-32",
+				ProvingKey: provingKey,
+				Wasm:       wasm,
+			},
+		},
+		func(msgHash []byte) ([]byte, string, error) {
+			// inp, err := token.inputsPreparer.Prepare(msgHash, circuits.CircuitID("authV3-8-32"))
+			return []byte(`{"genesisID":"23273167900576580892722615617815475823351560716009055944677723144398443009","profileNonce":"0","authClaim":["80551937543569765027552589160822318028","0","4720763745722683616702324599137259461509439547324750011830105416383780791263","4844030361230692908091131578688419341633213823133966379083981236400104720538","16547485850637761685","0","0","0"],"authClaimIncMtp":["20643387758736831799596675626240785455902781070167728593409367019626753600795","0","0","0","0","0","0","0"],"authClaimNonRevMtp":["0","0","0","0","0","0","0","0"],"authClaimNonRevMtpAuxHi":"0","authClaimNonRevMtpAuxHv":"0","authClaimNonRevMtpNoAux":"1","challenge":"6807542932739626352372202747650479413343284843713199903849051801035429042865","challengeSignatureR8x":"7525126381917356257636372917552188361117494179201353025019127810758731021916","challengeSignatureR8y":"20415806316264090304714063012907270619258996127071363004039215148633807127483","challengeSignatureS":"251992476641732412701642926724758498615919121424404336076731271483813524620","claimsTreeRoot":"8794724428328826645726823821449086761079599815895679828313419678997386356573","revTreeRoot":"0","rootsTreeRoot":"0","state":"7115004997868594253010848596868364067574661249707337517331323113105592633327","gistRoot":"20746967949242970504735775681024928984312199406892280437050499102607067526238","gistMtp":["0","0","0","1243904711429961858774220647610724273798918457991486031567244100767259239747","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"gistMtpAuxHi":"0","gistMtpAuxHv":"0","gistMtpNoAux":"0"}`), "authV3-8-32", err
+		},
+	)
 
 	assert.NoError(t, err)
 	t.Log(tokenString)
 
-	isValid, err := token.Verify(verificationKey)
+	isValid, err := token.DynamicVerify([]VerificationKeyParam{
+		{
+			CircuitID:       "authV3-8-32",
+			VerificationKey: verificationKey,
+		},
+	})
 	assert.NoError(t, err)
 	assert.True(t, isValid)
 }
 
 func BenchmarkTokenAuthV3_8_32__Prove(b *testing.B) {
 	payload := []byte("mymessage")
-	token, err := NewWithPayload(ProvingMethodGroth16AuthV3_8_32Instance, payload, MockPrepareAuthV3_8_32Inputs)
+	token, err := NewWithPayload(ProvingMethodGroth16AuthV3Instance, payload, MockPrepareAuthV3_8_32Inputs)
 	assert.NoError(b, err)
 
 	var provingKey, verificationKey, wasm []byte

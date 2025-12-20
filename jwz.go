@@ -38,6 +38,24 @@ type Token struct {
 	inputsPreparer ProofInputsPreparerHandlerFunc
 }
 
+// ProvingParam holds parameters for proving
+type ProvingParam struct {
+	CircuitID  string
+	ProvingKey []byte
+	Wasm       []byte
+}
+
+// VerificationKeyParam holds parameters for verification
+type VerificationKeyParam struct {
+	CircuitID       string
+	VerificationKey []byte
+}
+
+// ProofInputsPreparerHandlerFunc is a function type for preparing proof inputs
+type DynamicProofInputsPreparerHandlerFunc func(
+	msgHash []byte,
+) (inputs []byte, targetCircuitID string, err error)
+
 // NewWithPayload creates a new Token with the specified proving method and payload.
 func NewWithPayload(prover ProvingMethod, payload []byte, inputsPreparer ProofInputsPreparerHandlerFunc) (*Token, error) {
 
@@ -202,6 +220,78 @@ func (token *Token) ParsePubSignals(out circuits.PubSignalsUnmarshaller) error {
 	return err
 }
 
+// DynamicProve creates and returns a complete, proved JWZ using dynamic circuit ID and inputs preparer.
+func (token *Token) DynamicProve(
+	provingParams []ProvingParam,
+	inputsPreparer DynamicProofInputsPreparerHandlerFunc,
+) (string, error) {
+
+	headers, err := json.Marshal(token.raw.Header)
+	if err != nil {
+		return "", err
+	}
+	token.raw.Protected = headers
+
+	msgHash, err := token.GetMessageHash()
+	if err != nil {
+		return "", err
+	}
+
+	inputs, targetCircuitID, err := inputsPreparer(msgHash)
+	if err != nil {
+		return "", err
+	}
+	if targetCircuitID == "" {
+		targetCircuitID = token.CircuitID
+	}
+	if sc, ok := token.Method.(interface{ SupportedCircuits() []string }); ok {
+		supported := false
+		for _, c := range sc.SupportedCircuits() {
+			if c == targetCircuitID {
+				supported = true
+				break
+			}
+		}
+		if !supported {
+			return "", fmt.Errorf(
+				"circuit %s is not supported by proving method %s",
+				targetCircuitID,
+				token.Method.Alg(),
+			)
+		}
+	}
+
+	var provingKey, wasm []byte
+	found := false
+	for _, p := range provingParams {
+		if p.CircuitID == targetCircuitID {
+			provingKey = p.ProvingKey
+			wasm = p.Wasm
+			found = true
+			break
+		}
+	}
+	if !found {
+		return "", fmt.Errorf("no proving params for circuit %s", targetCircuitID)
+	}
+
+	proof, err := token.Method.Prove(inputs, provingKey, wasm)
+	if err != nil {
+		return "", err
+	}
+
+	proof.Proof.Protocol = proof.Proof.Protocol + ";" + targetCircuitID
+	marshaledProof, err := json.Marshal(proof)
+	if err != nil {
+		return "", err
+	}
+
+	token.ZkProof = proof
+	token.raw.ZKP = marshaledProof
+
+	return token.CompactSerialize()
+}
+
 // Prove creates and returns a complete, proved JWZ.
 // The token is proven using the Proving Method specified in the token.
 func (token *Token) Prove(provingKey, wasm []byte) (string, error) {
@@ -252,6 +342,68 @@ func (token *Token) Verify(verificationKey []byte) (bool, error) {
 	}
 
 	return true, nil
+}
+
+// DynamicVerify performs zero knowledge verification using circuit-specific verification key
+func (token *Token) DynamicVerify(verificationKeysMap []VerificationKeyParam) (bool, error) {
+	if token.ZkProof == nil {
+		return false, errors.New("missing zkp")
+	}
+
+	circuitID := circuitIDFromProofOrHeader(token)
+	if sc, ok := token.Method.(interface{ SupportedCircuits() []string }); ok {
+		supported := false
+		for _, c := range sc.SupportedCircuits() {
+			if c == circuitID {
+				supported = true
+				break
+			}
+		}
+		if !supported {
+			return false, fmt.Errorf("circuit %s is not supported by proving method %s", circuitID, token.Method.Alg())
+		}
+	}
+
+	var vk []byte
+	found := false
+	for _, item := range verificationKeysMap {
+		if item.CircuitID == circuitID {
+			vk = item.VerificationKey
+			found = true
+			break
+		}
+	}
+	if !found {
+		return false, fmt.Errorf("no verification key for circuit %s", circuitID)
+	}
+
+	msgHash, err := token.GetMessageHash()
+	if err != nil {
+		return false, err
+	}
+
+	if err := token.Method.Verify(msgHash, token.ZkProof, vk); err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// circuitIDFromProofOrHeader extracts circuitID from proof protocol field if present, otherwise from headers
+func circuitIDFromProofOrHeader(token *Token) string {
+	if token != nil && token.ZkProof != nil {
+		proto := strings.TrimSpace(token.ZkProof.Proof.Protocol)
+		if proto != "" {
+			parts := strings.Split(proto, ";")
+			if len(parts) > 1 {
+				cid := strings.TrimSpace(parts[1])
+				if cid != "" {
+					return cid
+				}
+			}
+		}
+	}
+	return token.CircuitID
 }
 
 // GetMessageHash returns bytes of jwz message hash.

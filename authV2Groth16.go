@@ -22,8 +22,9 @@ var AuthV2Groth16Alg = ProvingMethodAlg{Groth16, string(circuits.AuthV2CircuitID
 // ProvingMethodGroth16AuthV2 instance for Groth16 proving method with an authV2 circuit
 type ProvingMethodGroth16AuthV2 struct {
 	ProvingMethodAlg
-	cacheMutex sync.RWMutex
-	cache      map[[sha256.Size]byte]witness.Calculator
+	circuitSubVersions []string
+	cacheMutex         sync.RWMutex
+	cache              map[[sha256.Size]byte]witness.Calculator
 }
 
 // ProvingMethodGroth16AuthInstance instance for Groth16 proving method with an authV2 circuit
@@ -34,8 +35,9 @@ var (
 // nolint : used for init proving method instance
 func init() {
 	ProvingMethodGroth16AuthV2Instance = &ProvingMethodGroth16AuthV2{
-		ProvingMethodAlg: AuthV2Groth16Alg,
-		cache:            make(map[[sha256.Size]byte]witness.Calculator),
+		ProvingMethodAlg:   AuthV2Groth16Alg,
+		circuitSubVersions: []string{},
+		cache:              make(map[[sha256.Size]byte]witness.Calculator),
 	}
 	RegisterProvingMethod(ProvingMethodGroth16AuthV2Instance.ProvingMethodAlg,
 		func() ProvingMethod { return ProvingMethodGroth16AuthV2Instance })
@@ -49,6 +51,26 @@ func (m *ProvingMethodGroth16AuthV2) Alg() string {
 // CircuitID returns name of circuit
 func (m *ProvingMethodGroth16AuthV2) CircuitID() string {
 	return m.ProvingMethodAlg.CircuitID
+}
+
+// SupportedCircuits returns list of supported circuit IDs
+func (m *ProvingMethodGroth16AuthV2) SupportedCircuits() []string {
+	seen := make(map[string]struct{}, 1+len(m.circuitSubVersions))
+	out := make([]string, 0, 1+len(m.circuitSubVersions))
+
+	add := func(s string) {
+		if _, ok := seen[s]; ok {
+			return
+		}
+		seen[s] = struct{}{}
+		out = append(out, s)
+	}
+
+	add(m.ProvingMethodAlg.CircuitID)
+	for _, s := range m.circuitSubVersions {
+		add(s)
+	}
+	return out
 }
 
 // Verify performs Groth16 proof verification and checks equality of message hash and proven challenge public signals
