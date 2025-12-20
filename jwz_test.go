@@ -244,7 +244,7 @@ func TestTokenAuthV3_ParseWithOutputs(t *testing.T) {
 	assert.Equal(t, "did:iden3:polygon:mumbai:wuzLSsUkkPdMn16Md8uHLKnfw9b3GB7gLLheTJfSc", did.String())
 }
 
-func TestTokenAuthV3_8_32__DynamicProve(t *testing.T) {
+func TestTokenAuthV3_8_32_DynamicProve(t *testing.T) {
 	payload := []byte("mymessage")
 	const authV3_8_32 = "authV3-8-32"
 	token, err := NewDynamic(ProvingMethodGroth16AuthV3Instance, payload)
@@ -290,9 +290,10 @@ func TestTokenAuthV3_8_32__DynamicProve(t *testing.T) {
 	assert.True(t, isValid)
 }
 
-func BenchmarkTokenAuthV3_8_32__DynamicProve(b *testing.B) {
+func BenchmarkTokenAuthV3_8_32_DynamicProve(b *testing.B) {
 	payload := []byte("mymessage")
-	token, err := NewWithPayload(ProvingMethodGroth16AuthV3Instance, payload, MockPrepareAuthV3_8_32Inputs)
+	const authV3_8_32 = "authV3-8-32"
+	token, err := NewDynamic(ProvingMethodGroth16AuthV3Instance, payload)
 	assert.NoError(b, err)
 
 	var provingKey, verificationKey, wasm []byte
@@ -307,10 +308,27 @@ func BenchmarkTokenAuthV3_8_32__DynamicProve(b *testing.B) {
 	assert.NoError(b, err)
 
 	for i := 0; i < b.N; i++ {
-		_, err = token.Prove(provingKey, wasm)
+		_, err := token.DynamicProve(
+			[]ProvingParam{
+				{
+					CircuitID:  authV3_8_32,
+					ProvingKey: provingKey,
+					Wasm:       wasm,
+				},
+			},
+			func(msgHash []byte) ([]byte, string, error) {
+				inputs, preparerErr := MockPrepareAuthV3_8_32Inputs(msgHash, circuits.CircuitID(authV3_8_32))
+				return inputs, authV3_8_32, preparerErr
+			},
+		)
 		assert.NoError(b, err)
 
-		isValid, err := token.Verify(verificationKey)
+		isValid, err := token.DynamicVerify([]VerificationKeyParam{
+			{
+				CircuitID:       authV3_8_32,
+				VerificationKey: verificationKey,
+			},
+		})
 		assert.NoError(b, err)
 		assert.True(b, isValid)
 	}
