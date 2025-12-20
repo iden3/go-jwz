@@ -71,6 +71,20 @@ func NewWithPayload(prover ProvingMethod, payload []byte, inputsPreparer ProofIn
 	return token, nil
 }
 
+// NewDynamic creates a new Token with the specified proving method and payload.
+func NewDynamic(prover ProvingMethod, payload []byte) (*Token, error) {
+
+	token := &Token{
+		Alg:       prover.Alg(),
+		CircuitID: prover.CircuitID(),
+		Method:    prover,
+	}
+	token.setDefaultHeaders(prover.Alg(), prover.CircuitID())
+	token.setPayload(payload)
+
+	return token, nil
+}
+
 // rawJSONWebZeroknowledge is json web token with signature presented by zero knowledge proof
 type rawJSONWebZeroknowledge struct {
 	Payload   []byte                    `json:"payload,omitempty"`
@@ -225,7 +239,6 @@ func (token *Token) DynamicProve(
 	provingParams []ProvingParam,
 	inputsPreparer DynamicProofInputsPreparerHandlerFunc,
 ) (string, error) {
-
 	headers, err := json.Marshal(token.raw.Header)
 	if err != nil {
 		return "", err
@@ -415,7 +428,6 @@ func (token *Token) GetMessageHash() ([]byte, error) {
 	}
 	protectedHeaders := base64.RawURLEncoding.EncodeToString(headers)
 	payload := base64.RawURLEncoding.EncodeToString(token.raw.Payload)
-
 	// JWZ ZkProof input value is ASCII(BASE64URL(UTF8(JWS Protected Header)) || '.' || BASE64URL(JWS Payload)).
 	messageToProof := []byte(fmt.Sprintf("%s.%s", protectedHeaders, payload))
 	hash, err := Hash(messageToProof)
